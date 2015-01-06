@@ -1,0 +1,54 @@
+;; define me first!
+(define-macro (set-signal! variable value seconds . rate)
+  (let ((r (if (null? rate) 1/30 (car rate))))
+    (if (and (or (list? value)
+                 (defined? value))
+             (closure? (eval value)))
+        `(let l1929 ((t (now))
+                     (count (/ ,seconds ,r)))
+           (if (equal? ,variable 'stop-signal)
+               'done
+               (begin (set! ,variable (apply ,value (list ,variable)))
+                      (if (> count 1)
+                          (callback (+ t (* *samplerate* ,r)) l1929 (+ t (* *samplerate* ,r)) (- count 1))))))
+        `(let l1929 ((t (now))
+                     (inc (/ (- ,value ,variable) (real->integer (/ ,seconds ,r))))
+                     (count (real->integer (/ ,seconds ,r))))
+           (if (equal? ,variable 'stop-signal)
+               'done
+               (begin (set! ,variable (+ ,variable inc))
+                      (if (> count 1)
+                          (callback (+ t (* *samplerate* ,r)) l1929 (+ t (* *samplerate* ,r)) inc (- count 1)))))))))
+
+;;; test example
+
+
+;; define a global var
+(define *g1* 0.0)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; pretty printing for global var
+(bind-func print_g1
+  (lambda (x:double)
+    (printf "%07.3f\r" x)))
+
+(define printg1
+  (lambda (beat dur)
+    (print_g1 *g1*)
+    (ascii-print-color 0 2 8)        
+    (callback (*metro* (+ beat (* .5 dur))) 'printg1 (+ beat dur) dur)))
+
+(printg1 (*metro* 'get-beat 4) 1/8)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; change global var at random times to random values
+(define changeg1
+  (lambda ()
+    (let ((vtk (random 100))
+          (seconds (random 1 10)))
+      (print "slide to" vtk "over" seconds "seconds\n")
+      (set-signal! *g1* vtk seconds)
+      (callback (+ (now) (* *samplerate* seconds)) 'changeg1))))
+
+
+(changeg1)

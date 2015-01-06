@@ -1,0 +1,157 @@
+;;;;; drums
+;; define me first!
+
+(define *metro* (make-metro 120))
+(define *metre1* (make-metre '( 3 2 ) 0.25))
+(define *metre2* (make-metre '( 4 3 ) 0.25))
+
+(define *kickVel* 0.0)
+(let ((vtk 0) (seconds 15))
+          (set-signal! *kickVel* vtk seconds))
+
+(define *hhVel* 0.0)
+(let ((vtk 60) (seconds 15))
+          (set-signal! *hhVel* vtk seconds))
+
+(define *rideVel* 80.0)
+(let ((vtk 120) (seconds 15))
+          (set-signal! *rideVel* vtk seconds))
+
+(define kick
+  (lambda (beat dur)
+  	(if  (*metre1* beat 1.0)   
+    	(play edrums 18 160 dur))
+
+    ; (if  (= (modulo beat 8) 0)
+    ;   (play edrums 10 140 dur))
+    (callback (*metro* (+ beat (* .5 dur))) 'kick (+ beat dur) dur)
+    ))
+
+(kick (*metro* 'get-beat 1) 1/2)
+
+
+
+(define snare
+  (lambda (beat dur)
+    (if (*metre1* beat 3.0)
+      (play  edrums (random '(46)) 120 1/4))
+    (callback (*metro* (+ beat (* .5 dur))) 'snare (+ beat dur) dur)
+    ))
+
+(snare (*metro* 'get-beat 1) 1/2)
+
+(define snare2
+  (lambda (beat dur)
+    (if (*metre2* beat 3.0)
+      (play  edrums (random '(40 41)) 120 1/4))
+    (callback (*metro* (+ beat (* .5 dur))) 'snare2 (+ beat dur) dur)
+    ))
+
+(snare2 (*metro* 'get-beat 1) 1/2)
+
+(define snare2
+  (lambda (beat dur)
+    (if (and (> (modulo beat 4) 1/2) (< (modulo beat 4) 5/2) (= (modulo beat 1/2) 1/4))
+      (play  edrums (random '(41 43 44)) (wave 60 80 5/4) 1))
+   (callback (*metro* (+ beat (* .5 dur))) 'snare2 (+ beat dur) 1/4)
+    ))
+
+(snare2 (*metro* 'get-beat 1) 1/8)
+
+(define hihats
+  (lambda (beat dur)
+    (if (*metre1* beat 2.0)
+    (play djembe (rampr 20 4 1/2) 120 dur))
+   (callback (*metro* (+ beat (* .5 dur))) 'hihats (+ beat dur) dur)
+    ))
+
+(hihats (*metro* 'get-beat 1) 1/2)
+
+(define hihats2
+  (lambda (beat dur)
+    (if (*metre2* beat 2.0)
+    (play conga (rampr 12 4 1/2) (cosr 100 20 3/2) dur))
+   (callback (*metro* (+ beat (* .5 dur))) 'hihats2 (+ beat dur) dur)
+    ))
+
+(hihats2 (*metro* 'get-beat 1) 1/4)
+
+
+(define ride
+  (lambda (beat dur)
+    (if (> (random) 0.5)
+      (play drums (rampr 10 5 (random '(1/4 1/7 1/2))) (random '(80 100)) (random '(1/4 1/6)))
+      (play edrums (cosr 8 7 (random '(1/4 1/2 1/3))) (random '(80 100)) 1/4))
+  (callback (*metro* (+ beat (* .5 dur))) 'ride (+ beat dur) dur)
+    ))
+
+(ride (*metro* 'get-beat 1) 1/4)
+(hihats (*metro* 'get-beat 1) 1/8)
+
+(define hihats2
+  (lambda (beat dur)
+    (play edrums (random 21 21 22 23) (cosr 100 20 1) dur)
+   (callback (*metro* (+ beat (* .5 dur))) 'hihats2 (+ beat dur) dur)
+    ))
+
+(hihats2 (*metro* 'get-beat 1) 1/4)
+
+
+
+(define toms
+  (lambda (beat dur)
+    (if (= (modulo beat 1) 0)
+      (set! dur (random '(4/5 1/5)))) 
+      (play drums (random '(11 16)) (random '(0 0 0 50 0)) dur)
+    (callback (*metro* (+ beat (* .5 dur))) 'toms (+ beat dur) dur)
+    ))
+
+
+(toms (*metro* 'get-beat 1) 1)
+
+
+;;percussion
+
+
+
+(define perc1
+  (lambda (beat dur)
+    (if (< (modulo beat 10) 9) 
+      (play djembe (wave 12 17 5/2) (random '(0 0 100)) dur))
+    (callback (*metro* (+ beat (* .5 dur))) 'perc1 (+ beat dur) dur)
+    ))
+
+
+(perc1 (*metro* 'get-beat 1) 1/2)
+
+
+
+(define perc2
+  (lambda (beat dur)
+    (if (or (= (modulo beat 5/2) 0) (= (modulo beat 2) 1) (= (modulo beat 3/2) 1/2)) 
+      (play djembe (random '(12 13 14 15)) (wave 60 100 (random '(3/4 5/2)) dur)))
+    (callback (*metro* (+ beat (* .5 dur))) 'perc2 (+ beat dur) dur)
+    ))
+
+
+(perc2 (*metro* 'get-beat 1) 1/2)
+
+(define bells
+  (lambda (beat dur)
+    (play drums  (if (< (modulo beat 5) 2) 37 36) 50 dur)
+    (callback (*metro* (+ beat (* .5 dur))) 'bells (+ beat dur) dur)
+    ))
+
+
+(bells (*metro* 'get-beat 1) 1)
+
+(define guimbard
+  (lambda (beat dur)
+    (if (or (= (modulo beat 7) 0) (= (modulo beat 4) 1/2) (= (modulo beat 16) 7/4)) 
+      (play jawharp (random 10 17) (wave 70 90 2) dur))
+      ;(play jawharp (random 20) (wave 0 90 3) dur))
+    (callback (*metro* (+ beat (* .5 dur))) 'guimbard (+ beat dur) dur)
+    ))
+
+
+(guimbard (*metro* 'get-beat 1) 1/4)
