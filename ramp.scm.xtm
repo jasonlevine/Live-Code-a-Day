@@ -36,7 +36,8 @@
   (lambda (beat dur)
     (print_g1 *g1*)
     (ascii-print-color 0 2 8)        
-    (callback (*metro* (+ beat (* .5 dur))) 'printg1 (+ beat dur) dur)))
+    (callback (*metro* (+ beat (* .5 dur))) 'printg1 (+ beat dur) dur))
+  )
 
 (printg1 (*metro* 'get-beat 4) 1/8)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -48,7 +49,8 @@
           (seconds (random 1 10)))
       (print "slide to" vtk "over" seconds "seconds\n")
       (set-signal! *g1* vtk seconds)
-      (callback (+ (now) (* *samplerate* seconds)) 'changeg1))))
+      (callback (+ (now) (* *samplerate* seconds)) 'changeg1)
+      )))
 
 
 (changeg1)

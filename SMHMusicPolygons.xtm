@@ -1,66 +1,25 @@
-(bind-val beat_array |14,double|*)
 ;;; Code:
 (define glctx (gl:make-ctx ":0.0" #f 0.0 0.0 640.0 480.0))
 
-;; my circle function
-(bind-func circle
-	(lambda (radius res)
-		(glBegin GL_TRIANGLE_FAN)
-		(let ((i:double 0.0))
-			(dotimes (i res)
-				(let ((radians (* (/ i res) 6.283)))
-					(glVertex2d (* (sin radians) radius) 
-            (* (cos radians) radius))))
-		(glEnd))))
+(bind-func initgl
+  (lambda ()
+    (glMatrixMode GL_PROJECTION)
+    (glLoadIdentity)
+    (glOrtho -4. 4. -3. 3. 0.0 10.)
+    (glMatrixMode GL_MODELVIEW)))
 
-;; a trivial opengl draw loop
-(bind-func my-gl-loop
-    (lambda ()
-      (glClear (+ GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT))
-      (glLoadIdentity)
-      (let ((wavelength:double 100000.0))
-        (let ((i:i64 1) (n:double 14.0))
-          (dotimes (i 15)
-              (glColor3d (aref beat_array i) 1.0 0.0)
-              ;(glPushMatrix)
-              ;(glRotated (* 45.0 (aref beat_array i)) 1.0 0.0 0.0)
-              (glTranslated 0.0 -0.05 (* 0.2 (aref beat_array i)))
+(initgl)
 
-              (circle (* 3.0 (/ 1.0 (i64tod i))) (- n (i64tod i))))
-       		;(glPopMatrix)
-    			
-              ))
-      ))
-     )
+;beat array
+(bind-val beat_array |14,double|*)
 
-(bind-func my-gl-loop
-    (lambda ()
-      (glClear (+ GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT))
-      (glLoadIdentity)
-      (let ((wavelength:double 100000.0))
-        (let ((i:i64 1) (n:double 14.0))
-          (dotimes (i 15)
-          	(let ((val:double (aref beat_array i)))
-              (glColor3d val (* val val)  (/ 1.0 (i64tod i)))
-              (glTranslated 0.0 (wave 4000.0 0.01) 0.0)
-              (glPushMatrix)
-              ;(glTranslated 0.0 (wave 4000.0 0.05) 0.0)
-              ;(glRotated (wave 4000.0 5.1) 0.0 0.0 1.0)
-              
-              (circle (- 1.0 (/ (i64tod i) n)) (- n (i64tod i)))
-              (glPopMatrix)
-             )
-          )
-        )
-       )
-      ))
-     )
+(bind-func setBeat
+  (lambda (beat:i64 val:double)
+    (aset! beat_array beat val)))
 
-(bind-func wave
-	(lambda (wavelength:double amplitude:double)
-		(* amplitude (cos (/ (i64tod (now)) wavelength)))))
-
-(wave 4000.0 0.5)
+(bind-func getBeat
+  (lambda (beat:i64)
+    (aref beat_array beat)))
 
 (define fade-out
 	(lambda ()
@@ -74,14 +33,66 @@
 (fade-out)
 
 
-(bind-func initgl
-  (lambda ()
-    (glMatrixMode GL_PROJECTION)
-    (glLoadIdentity)
-    (glOrtho -1. 1. -1. 1. 0.0 10.)
-    (glMatrixMode GL_MODELVIEW)))
+;;animation functions
+(bind-func wave
+	(lambda (wavelength:double amplitude:double)
+		(* amplitude (cos (/ (i64tod (now)) wavelength)))))
 
-(initgl)
+;; my circle function
+(bind-func circle
+	(lambda (radius res)
+		(glBegin GL_TRIANGLE_FAN)
+		(let ((i:double 0.0))
+			(dotimes (i res)
+				(let ((radians (* (/ i res) 6.283)))
+					(glVertex2d (* (sin radians) radius) 
+            (* (cos radians) radius))))
+		(glEnd))))
+
+
+(bind-func mandala
+	(lambda ()
+		(let ((i:i64 1) (n:double 14.0))
+          (dotimes (i 15)
+          	(let ((val:double (aref beat_array i)))
+              (glColor3d val (* val val)  (/ 1.0 (i64tod i)))
+              (glTranslated 0.0 (wave 4000.0 0.01) 0.0)
+              (glPushMatrix)
+              ;(glTranslated 0.0 (wave 4000.0 0.5) 0.0)
+              ;(glRotated (wave 4000.0 5.1) 0.0 0.0 1.0)
+              (glRotated (* (i64tod i) (* 0.001 (i64tod (now)))) 0.0 0.0 1.0)
+              
+              (circle (- 1.0 (/ (i64tod i) n)) (- n (i64tod i)))
+              (glPopMatrix)
+             )
+          )
+       )))
+
+
+(bind-func my-gl-loop
+    (lambda ()
+      (glClear (+ GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT))
+      (glLoadIdentity)
+      (mandala)
+      (let ((i:double 1.0))
+      	(dotimes (i 6.0)
+		      (glPushMatrix)
+		      (glRotated (+ (* 0.001 (i64tod (now))) (* i 60.0)) 0.0 0.0 1.0)
+		      (glTranslated 0.0 2.0 0.0)
+		      (mandala)
+		      (glPopMatrix)
+		      ))
+
+      )))
+
+
+
+(wave 4000.0 0.5)
+
+
+
+
+
 
 ;; standard impromptu callback                                                
 (define opengl-test
@@ -93,31 +104,28 @@
 (opengl-test)
 
 
+;music
 
 (define scale (pc:scale 0 'pentatonic))
-
-
-(bind-func setBeat
-  (lambda (beat:i64 val:double)
-    (aset! beat_array beat val)))
-
-(bind-func getBeat
-  (lambda (beat:i64)
-    (aref beat_array beat)))
-
-(setBeat 7 1.0)
 
 (define *metro* (make-metro 140))
 
 (define SHMusic
   (lambda (beat mod)
     (if (= (modulo beat mod) 0)
-      ;(play conga (pc:relative 36 (* 2 mod) scale) 20 1))
-    	(play conga (+ 10 mod) 120 1))
+    	(play djembe (+ 10 mod) 150 1))
+
+     (if (= (modulo beat mod) 0)
+    	(play conga (+ 10 mod) 150 1)
+    	)
+
+      (if (= (modulo beat mod) 8)
+    	(play piano 48 120 1)
+    	)
 
     (if (= (modulo beat mod) 0)
       (setBeat mod 1.0)
-      ;(setBeat mod 0.0)
+      (setBeat mod 0.0)
       )
 
 
