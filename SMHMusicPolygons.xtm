@@ -26,7 +26,7 @@
 		(let ((i:i64 1))
 			(dotimes (i 15)
 					(if (> (getBeat i) 0.0) 
-						(setBeat i (* (getBeat i) 0.9))))
+						(setBeat i (* (getBeat i) 0.99))))
 		)
 		(callback (+ (now) 500) 'fade-out)))
 
@@ -56,9 +56,9 @@
           (dotimes (i 15)
           	(let ((val:double (aref beat_array i)))
               (glColor3d val (* val val)  (/ 1.0 (i64tod i)))
-              (glTranslated 0.0 (wave 4000.0 0.01) 0.0)
+              ;(glTranslated 0.0 (wave 4000.0 0.01) 0.0)
               (glPushMatrix)
-              ;(glTranslated 0.0 (wave 4000.0 0.5) 0.0)
+              (glTranslated 0.0 (wave 4000.0 (* (i64tod i) 0.1)) 0.0)
               ;(glRotated (wave 4000.0 5.1) 0.0 0.0 1.0)
               (glRotated (* (i64tod i) (* 0.001 (i64tod (now)))) 0.0 0.0 1.0)
               
@@ -78,7 +78,7 @@
       	(dotimes (i 6.0)
 		      (glPushMatrix)
 		      (glRotated (+ (* 0.001 (i64tod (now))) (* i 60.0)) 0.0 0.0 1.0)
-		      (glTranslated 0.0 2.0 0.0)
+		      (glTranslated 0.0 1.0 0.0)
 		      (mandala)
 		      (glPopMatrix)
 		      ))
@@ -115,17 +115,17 @@
     (if (= (modulo beat mod) 0)
     	(play djembe (+ 10 mod) 150 1))
 
-     (if (= (modulo beat mod) 0)
+     (if (= (modulo beat mod) 1)
     	(play conga (+ 10 mod) 150 1)
     	)
 
-      (if (= (modulo beat mod) 8)
-    	(play piano 48 120 1)
+      (if (= (modulo beat mod) 2)
+    	(play piano 60 120 1)
     	)
 
     (if (= (modulo beat mod) 0)
       (setBeat mod 1.0)
-      (setBeat mod 0.0)
+      ;(setBeat mod 0.0)
       )
 
 
