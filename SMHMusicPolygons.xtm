@@ -11,7 +11,7 @@
 (initgl)
 
 ;beat array
-(bind-val beat_array |14,double|*)
+(bind-val beat_array |15,double|)
 
 (bind-func setBeat
   (lambda (beat:i64 val:double)
@@ -58,11 +58,13 @@
               (glColor3d val (* val val)  (/ 1.0 (i64tod i)))
               ;(glTranslated 0.0 (wave 4000.0 0.01) 0.0)
               (glPushMatrix)
-              (glTranslated 0.0 (wave 4000.0 (* (i64tod i) 0.1)) 0.0)
-              ;(glRotated (wave 4000.0 5.1) 0.0 0.0 1.0)
+              (glRotated (wave 160000.0 90.1) 1.0 0.0 1.0)
+              ;(glTranslated 0.0 (wave 4000.0 (* (i64tod i) 0.1)) 0.0)
+              (glTranslated 0.0 (* (i64tod i) 0.1) (* (i64tod i) -0.1))
+              
               (glRotated (* (i64tod i) (* 0.001 (i64tod (now)))) 0.0 0.0 1.0)
               
-              (circle (- 1.0 (/ (i64tod i) n)) (- n (i64tod i)))
+              (circle (* 0.7 (- 1.0 (/ (i64tod i) n))) (- n (i64tod i)))
               (glPopMatrix)
              )
           )
@@ -73,21 +75,18 @@
     (lambda ()
       (glClear (+ GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT))
       (glLoadIdentity)
-      (mandala)
+      ;(mandala)
       (let ((i:double 1.0))
       	(dotimes (i 6.0)
 		      (glPushMatrix)
-		      (glRotated (+ (* 0.001 (i64tod (now))) (* i 60.0)) 0.0 0.0 1.0)
-		      (glTranslated 0.0 1.0 0.0)
+		      (glRotated  (* i 60.0) 0.0 0.0 1.0)
+		      (glTranslated 0.0  1.5 0.0)
 		      (mandala)
 		      (glPopMatrix)
 		      ))
 
       )))
 
-
-
-(wave 4000.0 0.5)
 
 
 
@@ -119,9 +118,7 @@
     	(play conga (+ 10 mod) 150 1)
     	)
 
-      (if (= (modulo beat mod) 2)
-    	(play piano 60 120 1)
-    	)
+
 
     (if (= (modulo beat mod) 0)
       (setBeat mod 1.0)
