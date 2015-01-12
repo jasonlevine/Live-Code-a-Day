@@ -1,0 +1,31 @@
+(define progression
+  (lambda (beat dur degree )
+    (let ((chord (pc:make-chord 48 77 5 (pc:diatonic 0 '^ degree))))
+        (if (*metre1* beat 1.0)
+          (for-each (lambda (p)
+                    (play piano p 160 dur))
+                    chord))
+
+
+        (play piano (pc:relative (car chord) (trir 0 7 1/3) (pc:chord->scale 0 degree)) 130 50000)
+    )
+
+    ;(callback (*metro* (+ beat (* .5 dur))) 'progression (+ beat dur) dur
+              (random (cdr (assoc degree '((i iv v iii vi)
+                                           (ii v vii)
+                                           (iii vi)
+                                           (iv v ii vii i)
+                                           (v i vi)
+                                           (vii v i)
+                                           (vi ii))))))))
+
+(progression (*metro* 'get-beat 1) 1/2 'i)
+
+
+
+
+
+
+
+(pc:make-chord 36 77 5 (pc:diatonic 0 '^ degree))
+(pc:chord->scale 0 'iii)

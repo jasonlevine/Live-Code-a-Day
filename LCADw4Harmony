@@ -1,13 +1,6 @@
-(define scale (pc:scale 8 'phrygian))
+(define scale (pc:scale 0 'ionian))
 
-(define wave
-  (lambda (min max wavelength)
-    (let ((freq (/ 1 wavelength)) (range (- max min)))
-      (let ((sinNorm (+ 0.5 (* 0.5 (sin (* (now) freq))))))
-        (+ min (* sinNorm range)) 
-    ))))
-
-(define root 3)
+(define root 1)
 (define pcr
   (lambda ()
     (pc:relative 48 root scale))) 
@@ -16,10 +9,8 @@
 
 (define key-change
   (lambda (beat)
-    (cond ((= (modulo beat 64) 0) (set! scale (pc:scale 8 'aeolian)))
-          ((= (modulo beat 64) 16) (set! scale (pc:scale 11 'ionian)))
-          ((= (modulo beat 64) 32) (set! scale (pc:scale 8 'aeolian)))
-          ((= (modulo beat 64) 48) (set! scale (pc:scale 11 'ionian))))
+    (cond ((= (modulo beat 32) 0) (set! scale (pc:scale 0 'ionian)))
+          ((= (modulo beat 32) 2) (set! scale (pc:scale 7 'ionian)))))
 
     (callback (*metro* (+ beat (* .5 1))) 'key-change (+ beat 1))
     ))
@@ -28,67 +19,178 @@
 (chords (*metro* 'get-beat 1) 1)
 (scale)
 
+(define res-sweep
+  (lambda (beat dur)
+    (fmpad_fx.res (wave 0.2 0.9 5/2))
+    (fmpad_fx.fb (wave 0.1 0.8 5))
+    ; (fmpad_fx.wet (wave 0.1 0.5 1/2))
+    (fmpad_fx.cwet (wave 0.1 0.8 4))
+    (fmpad_fx.cfb (wave 0.3 0.9 2))
+    (callback (*metro* (+ beat (* dur .5))) 'res-sweep
+        (+ beat dur) dur)))
+
+(res-sweep (*metro* 'get-beat 4.0) 5/4)
+
+(fmpad_fx.res 0.1)
+(fmpad_fx.fb 0.9)
+(fmpad_fx.wet 0.9)
+(fmpad_fx.cwet 0.8)
+(fmpad_fx.cfb 0.8)
+
+
+
+(define res-sweep
+  (lambda (beat dur)
+    (fmpad_fx.res (wave 0.2 0.9 5/2))
+    (fmpad_fx.fb (wave 0.1 0.8 5))
+    ; (fmpad_fx.wet (wave 0.1 0.5 1/2))
+    (fmpad_fx.cwet (wave 0.1 0.8 4))
+    (fmpad_fx.cfb (wave 0.3 0.9 2))
+    (callback (*metro* (+ beat (* dur .5))) 'res-sweep
+        (+ beat dur) dur)))
+
+(res-sweep (*metro* 'get-beat 4.0) 5/4)
+
+        (fmsynth_fx.cl (chorus_c 0.0))
+        (fmsynth_fx.cr (chorus_c 0.314))
+        (fmsynth_fx.del1 (delay_c (convert (/ SR 2.0))))
+        (fmsynth_fx.del2 (delay_c (convert (/ SR 3.0))))
+        (fmsynth_fx.vcfl (vcf_c 1))
+        (fmsynth_fx.vcfr (vcf_c 1))
+        (fmsynth_fx.res 0.7)        
+        (fmsynth_fx.revl (reverb_c 20.0))
+        (fmsynth_fx.revr (reverb_c 20.0))
+        (fmsynth_fx.cwet 0.1)
+        (fmsynth_fx.cfb 0.1)
+        (fmsynth_fx.dwet 0.1)
+        (fmsynth_fx.dfb 0.1)
+        (fmsynth_fx.wet 0.1)
+        (fmsynth_fx.fb 0.1)
+
+
+
+
+(chords (*metro* 'get-beat 1) 1)
+
+(define *degree* 0)
+
 (define chords
   (lambda (beat dur)
 
-    (if (= (modulo beat 4) 0)
-      (set! root (random (cdr (assoc root '((3 5) (5 1) (1 4) (4 3) ) )))))
+    (if (= (modulo beat 8) 0)
+      (set! root (random (cdr (assoc root '((i iv v iii vi)
+                                           (ii v vii)
+                                           (iii vi)
+                                           (iv v ii vii i)
+                                           (v i vi)
+                                           (vii v i)
+                                           (vi ii)))))))
 
-    ; (if (= (modulo beat 2) 0)
-    ;   (play shimmer (+ (pcr) 0) (wave 20 40 1) 1))
-
-    (if (= (modulo beat 1) 0)
-      
- 
+    (if (= (modulo beat 8) 0) 
       (for-each (lambda (p)
-                (play piano p (wave 90 130 (* 3 dur)) dur))
-                (pc:make-chord (pcr) (+ (pcr) 24) (random '(3 2)) scale))
+            (play piano p 110 dur))
+          (pc:make-chord (pcr) (+ (pcr) 12) (pc:diatonic 0 '^ root)))
+      )
 
     (callback (*metro* (+ beat (* .5 dur))) 'chords (+ beat dur) dur)
-    ; (cb beat dur 'chords)
     ))
 
+(chords (*metro* 'get-beat 1) 1)
 
-(chords (*metro* 'get-beat 1) 4)
+(define progression
+  (lambda (beat dur degree )
+    (if (*metre1* beat 1.0)
+      (for-each (lambda (p)
+                (play fmsynth p 50 (* 2 dur) (wave 0.0 1.0 25) (wave 1.0 10.0 27)))
+                (pc:make-chord 48 89 (random '(5)) (pc:diatonic 0 '- degree))))
 
-(define bassline
-  (lambda (beat dur)
-    (if (< (modulo beat 4) 3)
-      (play sawbass ( - (pcr) 12) 100 1/4))
-    (callback (*metro* (+ beat (* .5 dur))) 'bassline (+ beat dur) dur)
-    ))
+      (play fmsynth (pc:relative 60 (*metre2* beat) (pc:diatonic 0 '- degree)) (random '(40 60)) 1/2 (wave 0.0 1.0 29) (wave 10.0 20.0 3))
+    (callback (*metro* (+ beat (* .5 dur))) 'progression (+ beat dur) dur
+              (random (cdr (assoc degree '((i iv v iii6 vi)
+                                           (ii v vii)
+                                           (iii6 vi)
+                                           (iv v ii vii i)
+                                           (v i vi)
+                                           (vii v i)
+                                           (vi ii))))))))
 
-(bassline (*metro* 'get-beat 1) 1/2)
-
-(define bassline
-  (lambda (beat dur)
-    (if (= (modulo beat 4) 0)
-      (play sawbass ( + (pcr) 12) 100 2))
-    ;(callback (*metro* (+ beat (* .5 dur))) 'bassline (+ beat dur) dur)
-    ))
-
-(bassline (*metro* 'get-beat 1) 1)
+(progression (*metro* 'get-beat 1) 1/2 'i)
 
 (define melody
-  (lambda (beat dur octave)
-    (if (= (modulo beat 1) 0)
-      (set! dur (random '(3/2 1/2))))
-    (play piano (pc:relative (+ (pcr) (* octave 12)) 
-                  (* (random '(-1 1 2)) ( modulo  (/ (modulo beat 8) dur) 8)) scale) 
-                  (random '(50 0)) dur)
-    (callback (*metro* (+ beat (* .6 dur))) 'melody (+ beat dur) dur octave )
+  (lambda (beat dur)
+    (if (*metre2* beat 1.0)
+      (set! dur (random '(1/8 1/2 1/4 ))))
+      (play fmsynth 
+        (pc:relative (+ (random '(12 24)) (pcr)) (cosr (cosr 7 4 1/8) (cosr 4 3 1/6) 1/2) scale) 
+         (random  '(50 0 )) (* 1 dur))
+
+    (callback (*metro* (+ beat (* .5 dur))) 'melody (+ beat dur) dur)
     ))
 
-(melody (*metro* 'get-beat 1) 1 3)
+(melody (*metro* 'get-beat 1) 1/2)
+(bassline (*metro* 'get-beat 1) 1/3)
+(bassline (*metro* 'get-beat 1) 1/4)
+
+(define bassline2
+  (lambda (beat dur)
+    (if (*metre1* beat 1.0)
+      (play subbass 48  120 dur))
+
+    ; (if (*metre1* beat (random '(2.0 4.0)))
+    ;   (play subbass (- (pcr) 5)  110 dur))
+
+    ;  (if (*metre1* beat 6.0)
+    ;   (play subbass (pcr)  110 dur))
+
+    ; (if (*metre1* beat (random '(4)))
+    ;   (play subbass (pc:relative (- (pcr) 12) (random '(3 4 -2)) scale)  110 (* 2 dur)))
+   (callback (*metro* (+ beat (* .5 dur))) 'bassline2 (+ beat dur) 1/8)
+    ))
+
+(bassline2 (*metro* 'get-beat 1) 1)
+
+(define guitar1
+  (lambda (beat dur)
+    (if (*metre2* beat 1.0)
+      (play guitar (- (pcr) 12)  130 dur))
+
+    (if (*metre2* beat 2.0)
+      (play guitar (- (pcr) 5)  110 dur))
+
+     (if (*metre2* beat 3.0)
+      (play sawbass (pcr)  110 dur))
+
+  
+    (callback (*metro* (+ beat (* .5 dur))) 'guitar1 (+ beat dur) dur)
+    ))
+
+(guitar1 (*metro* 'get-beat 1) 1/2)
+
+
+
+
+
+
+(define melody1
+  (lambda (beat dur octave)
+    (if (= (modulo beat 1) 0)
+      (set! dur (random '(2 1/4  1/8))))
+    (play fmsynth (pc:relative (+ (pcr) (* octave 12)) 
+                  (* (random '(1 -1 2)) ( modulo  (/ (modulo beat 8) dur) 5)) scale) 
+                  (random '(40 10)) dur)
+    (callback (*metro* (+ beat (* .6 dur))) 'melody1 (+ beat dur) dur octave )
+    ))
+
+(melody1 (*metro* 'get-beat 1) 1 3)
 
 
 (define bassline
   (lambda (beat dur)
-    (if (= (modulo beat 1) 0)
-      (set! dur (random '(2 3))))
-    (play subbass (pc:relative (+ (pcr) 0) 
-                  (* (random '(-1 1 2)) ( modulo  (/ (modulo beat 8) dur) 8)) scale) 
-                  (random '(90 110)) dur)
+    (if (or (= (modulo beat 4) 0) (= (modulo beat 4) 3) (= (modulo beat 8) 7)
+      (set! dur (random '(1/4 1/2 1/3 1))))
+    (play subbass (pc:relative (+ (pcr) -12) 
+                  (* (random '(-1 1 2)) ( modulo  (/ (modulo beat 8) dur) 3)) scale) 
+                  (random '(100 120)) dur)))
     ;(callback (*metro* (+ beat (* .6 dur))) 'bassline (+ beat dur) dur)
     ))
 
