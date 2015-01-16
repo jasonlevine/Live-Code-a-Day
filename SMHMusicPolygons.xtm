@@ -50,7 +50,7 @@
 		(glEnd))))
 
 
-(bind-func mandala
+(bind-func mandala2
 	(lambda ()
 		(let ((i:i64 1) (n:double 14.0))
           (dotimes (i 15)
@@ -59,7 +59,7 @@
               ;(glTranslated 0.0 (wave 4000.0 0.01) 0.0)
               (glPushMatrix)
               (glRotated (wave 160000.0 90.1) 1.0 0.0 1.0)
-              ;(glTranslated 0.0 (wave 4000.0 (* (i64tod i) 0.1)) 0.0)
+              ;(glTranslated 0.0 (wavcde 4000.0 (* (i64tod i) 0.1)) 0.0)
               (glTranslated 0.0 (* (i64tod i) 0.1) (* (i64tod i) -0.1))
               
               (glRotated (* (i64tod i) (* 0.001 (i64tod (now)))) 0.0 0.0 1.0)
@@ -122,7 +122,7 @@
 
     (if (= (modulo beat mod) 0)
       (setBeat mod 1.0)
-      ;(setBeat mod 0.0)
+      (setBeat mod 0.0)
       )
 
 
