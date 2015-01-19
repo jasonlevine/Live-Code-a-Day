@@ -1,11 +1,11 @@
 ;;;;; drums
 ;; define me first!
-(define *metro* (make-metro 140))
+(define *metro* (make-metro 100))
 
 (define *subdiv* 1/2)
-(define *metre1* (make-metre '(8 4 2 2) *subdiv*))
-(define *metre2* (make-metre '(6 3 2 1) *subdiv*))
-(define *metre3* (make-metre '( 4 ) *subdiv*))
+(define *metre1* (make-metre '( 4 2 2) *subdiv*))
+(define *metre2* (make-metre '( 3 2 1) *subdiv*))
+(define *metre3* (make-metre '( 2 ) *subdiv*))
 (define *metre4* (make-metre '( 4 2 1 1) 1/2))
 
 
@@ -22,12 +22,22 @@
     (let ((vtk (- degree 10)) (seconds 0.3))
     (set-signal! *degree* vtk seconds))))
 
-(rampDegree 43.0)
+
+(bind-val degree double 0.0)
+
+(bind-func ramp_degree
+  (lambda (val:double)
+    (set! degree 1.0)
+    (let ((vtk (- val 10)) (seconds 0.3))
+    (set-signal! degree vtk seconds))))
+
+
+(ramp_degree 43.0)
 
 (define kit
   (lambda (beat dur)
 
-      (cond ((*metre1* beat 1.0) (play edrums 10 140 dur))
+      (cond ((*metre1* beat 1.0) (play edrums 12 140 dur))
             ((*metre1* beat 2.0) (play edrums 21 140 dur))
             ((*metre1* beat 3.0) (play edrums 23 130 dur))
             ((*metre1* beat 4.0) (play edrums 46 150 dur)))

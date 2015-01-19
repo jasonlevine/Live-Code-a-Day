@@ -1,0 +1,67 @@
+
+(bind-val degree double 0.0)
+
+(bind-func ramp_degree
+  (lambda (val:double)
+    (set! degree val)
+    (let ((vtk (- val 10)) (seconds 0.3))
+    (set-signal! degree vtk seconds))))
+
+
+
+
+
+(ramp_degree 43.0)
+
+
+
+
+(define kit
+  (lambda (beat dur)
+
+      (cond ((*metre1* beat 1.0) (play edrums 12 150 dur))
+            ((*metre1* beat 2.0) (play conga 21 140 dur))
+            ((*metre1* beat 3.0) (play conga 23 130 dur))
+            ((*metre1* beat 4.0) (play conga 46 150 dur)))
+
+     ; (cond ((*metre1* beat 1.0) (rampDegree 10.0))
+     ;       ((*metre2* beat 1.0) (rampDegree 21.0))
+       ;     ((*metre3* beat 3.0) (rampDegree 23.0))
+       ;     ((*metre3* beat 4.0) (rampDegree 46.0)))
+      (send_vals (*metre1* beat))
+
+      ; (play doumbek (cosr 20 10 dur) 140 dur)
+
+    ; )
+
+    ;(play doumbek (rampr 20 10 1/8) 140 dur)
+    
+
+   (callback (*metro* (+ beat (* 0.5 dur))) 'kit (+ beat dur) dur)
+))
+
+
+(kit (*metro* 'get-beat 1) 1/4) 
+
+
+
+
+
+(bind-func send_vals
+  (lambda (beat:double)
+    (cond ((= beat 1.0) (set! first_ring (+ first_ring 20.0)))
+          ((= beat 2.0) (set! second_ring (- second_ring 29.02)))
+          ((= beat 3.0) (set! third_ring (+ third_ring 48.03)))
+          ((= beat 4.0) (set! fourth_ring (- fourth_ring 37.7)))
+          ((= beat 5.0) (set! fifth_ring (+ fifth_ring 26.06))))
+
+
+    ))
+
+
+(first_ring)
+
+(define *subdiv* 1/4)
+(define *metre1* (make-metre '( 8) *subdiv*))
+(define *metre2* (make-metre '( 3 2 1) *subdiv*))
+(define *metre3* (make-metre '( 2 ) *subdiv*))
