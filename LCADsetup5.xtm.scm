@@ -34,7 +34,6 @@
     (cond ((< chan 2)
            (+ 
            (edrums in time chan dat) 
-
             (djembe in time chan dat)
             (conga in time chan dat)
              (piano in time chan dat)
@@ -43,6 +42,17 @@
 
 (dsp:set! dsp)
 
+(bind-func rms_c
+  (lambda ()
+    (let ((d:SAMPLE* (alloc FRAMES))
+          (t 0)
+          (db:SAMPLE 0.0))
+      (lambda (x:SAMPLE)
+        (pset! d (% t FRAMES) (* x x))
+        (set! t (+ t 1))
+        (if (= 0 (% t FRAMES))
+            (set! db (+ 3.0 (amp2db (sqrt (mean d FRAMES))))))
+        x))))
 
 ;;; Set up e drum samples
 ;;;
@@ -192,7 +202,7 @@
 (load-sampler
   piano
   ;; Can't use a variable here; need the actual path string
-  "/Users/jasonlevine/Code/extempore/LCAD/salamander/SalamanderGrandPianoV3_44.1khz16bit/44.1khz16bit"
+  "/Users/jasonlevine/Code/extempore/assets/salamander/SalamanderGrandPianoV3_44.1khz16bit/44.1khz16bit"
   ;; 'sound bank' index
   0
   parse-salamander-piano)

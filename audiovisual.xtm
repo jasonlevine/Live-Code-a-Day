@@ -1,28 +1,11 @@
 
-(bind-val degree double 0.0)
-
-(bind-func ramp_degree
-  (lambda (val:double)
-    (set! degree val)
-    (let ((vtk (- val 10)) (seconds 0.3))
-    (set-signal! degree vtk seconds))))
-
-
-
-
-
-(ramp_degree 43.0)
-
-
-
-
 (define kit
   (lambda (beat dur)
 
       (cond ((*metre1* beat 1.0) (play edrums 12 150 dur))
             ((*metre1* beat 2.0) (play conga 21 140 dur))
             ((*metre1* beat 3.0) (play conga 23 130 dur))
-            ((*metre1* beat 4.0) (play conga 46 150 dur)))
+            ((*metre1* beat 4.0) (play conga 25 150 dur)))
 
      ; (cond ((*metre1* beat 1.0) (rampDegree 10.0))
      ;       ((*metre2* beat 1.0) (rampDegree 21.0))
@@ -50,10 +33,27 @@
 (bind-func send_vals
   (lambda (beat:double)
     (cond ((= beat 1.0) (set! first_ring (+ first_ring 20.0)))
-          ((= beat 2.0) (set! second_ring (- second_ring 29.02)))
-          ((= beat 3.0) (set! third_ring (+ third_ring 48.03)))
-          ((= beat 4.0) (set! fourth_ring (- fourth_ring 37.7)))
-          ((= beat 5.0) (set! fifth_ring (+ fifth_ring 26.06))))
+          ((= beat 2.0) (set! second_ring (- second_ring 40.02)))
+          ((= beat 3.0) (set! third_ring (+ third_ring 80.03)))
+          ((= beat 4.0) (set! fourth_ring (- fourth_ring 160.7)))
+          ((= beat 5.0) (set! fifth_ring (+ fifth_ring 320.06))))
+
+
+    ))
+
+(bind-func send_vals
+  (lambda (beat:double)
+        (set! first_ring 1.0)
+         (set! second_ring 1.0)
+         (set! third_ring 1.0)
+          (set! fourth_ring 1.0)
+          (set! fifth_ring 1.0)
+
+    (cond ((= beat 1.0) (set! first_ring 2.0))
+          ((= beat 2.0) (set! second_ring 2.0))
+          ((= beat 3.0) (set! third_ring 2.0))
+          ((= beat 4.0) (set! fourth_ring 2.0))
+          ((= beat 5.0) (set! fifth_ring 2.0)))
 
 
     ))

@@ -1,4 +1,4 @@
-(define scale (pc:scale 0 'ionian))
+(define scale (pc:scale 0 'aeolian))
 
 (define root 1)
 (define pcr
@@ -116,13 +116,31 @@
 
 (progression (*metro* 'get-beat 1) 1/2 'i)
 
+(bind-val curr_note double 2.0)
+(bind-func set_curr_note
+  (lambda (note:double)
+    (set! curr_note note)))
+
+(bind-val counter double 0.0)
+(bind-func inc_counter
+  (lambda ()
+    (set! counter (+ counter curr_note))))
+
+(bind-func dec_counter
+  (lambda ()
+    (set! counter (- counter 20.0))))
+
 (define melody
   (lambda (beat dur)
     (if (*metre2* beat 1.0)
-      (set! dur (random '(1/8 1/2 1/4 ))))
-      (play fmsynth 
-        (pc:relative (+ (random '(12 24)) (pcr)) (cosr (cosr 7 4 1/8) (cosr 4 3 1/6) 1/2) scale) 
-         (random  '(50 0 )) (* 1 dur))
+      (set! dur (random '(1/4 2 1/2 ))))
+
+    (let ( (note (pc:relative (pcr) (cosr 5 3 1/2) scale))
+          (vel (random  '(150 0 ))))
+
+      (play piano note vel (* 1 dur))
+
+      (set_curr_note vel))
 
     (callback (*metro* (+ beat (* .5 dur))) 'melody (+ beat dur) dur)
     ))
@@ -175,10 +193,10 @@
   (lambda (beat dur octave)
     (if (= (modulo beat 1) 0)
       (set! dur (random '(2 1/4  1/8))))
-    (play fmsynth (pc:relative (+ (pcr) (* octave 12)) 
+    (play piano (pc:relative (+ (pcr) (* octave 12)) 
                   (* (random '(1 -1 2)) ( modulo  (/ (modulo beat 8) dur) 5)) scale) 
-                  (random '(40 10)) dur)
-    (callback (*metro* (+ beat (* .6 dur))) 'melody1 (+ beat dur) dur octave )
+                  (random '(140 10)) dur)
+    ;(callback (*metro* (+ beat (* .6 dur))) 'melody1 (+ beat dur) dur octave )
     ))
 
 (melody1 (*metro* 'get-beat 1) 1 3)

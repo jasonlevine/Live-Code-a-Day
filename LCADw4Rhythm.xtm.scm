@@ -3,8 +3,8 @@
 (define *metro* (make-metro 100))
 
 (define *subdiv* 1/2)
-(define *metre1* (make-metre '( 4 2 2) *subdiv*))
-(define *metre2* (make-metre '( 3 2 1) *subdiv*))
+(define *metre1* (make-metre '( 2 2 2 2 4) *subdiv*))
+(define *metre2* (make-metre '( 6 1 2 1) *subdiv*))
 (define *metre3* (make-metre '( 2 ) *subdiv*))
 (define *metre4* (make-metre '( 4 2 1 1) 1/2))
 
