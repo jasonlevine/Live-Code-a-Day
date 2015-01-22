@@ -12,7 +12,7 @@
        ;     ((*metre3* beat 3.0) (rampDegree 23.0))
        ;     ((*metre3* beat 4.0) (rampDegree 46.0)))
       (send_vals (*metre1* beat))
-
+      ;(set! beatNum (*metre1* beat))
       ; (play doumbek (cosr 20 10 dur) 140 dur)
 
     ; )
@@ -27,11 +27,13 @@
 (kit (*metro* 'get-beat 1) 1/4) 
 
 
-
+(bind-val beatNum double 3.0)
 
 
 (bind-func send_vals
   (lambda (beat:double)
+    
+    
     (cond ((= beat 1.0) (set! first_ring (+ first_ring 20.0)))
           ((= beat 2.0) (set! second_ring (- second_ring 40.02)))
           ((= beat 3.0) (set! third_ring (+ third_ring 80.03)))
@@ -43,17 +45,18 @@
 
 (bind-func send_vals
   (lambda (beat:double)
-        (set! first_ring 1.0)
-         (set! second_ring 1.0)
-         (set! third_ring 1.0)
-          (set! fourth_ring 1.0)
-          (set! fifth_ring 1.0)
+    (if (= beat 1.0) (set! beatNum (modulo (+ beatNum beat) 8)))
+        (set! first_ring (- first_ring 10.0))
+         (set! second_ring (- second_ring 10.0))
+         (set! third_ring (- third_ring 10.0))
+          (set! fourth_ring (- fourth_ring 10.0))
+          (set! fifth_ring (- fifth_ring 10.0))
 
-    (cond ((= beat 1.0) (set! first_ring 2.0))
-          ((= beat 2.0) (set! second_ring 2.0))
-          ((= beat 3.0) (set! third_ring 2.0))
-          ((= beat 4.0) (set! fourth_ring 2.0))
-          ((= beat 5.0) (set! fifth_ring 2.0)))
+    (cond ((= beat 1.0) (set! first_ring 200.0))
+          ((= beat 2.0) (set! second_ring 200.0))
+          ((= beat 3.0) (set! third_ring 200.0))
+          ((= beat 4.0) (set! fourth_ring 200.0))
+          ((= beat 5.0) (set! fifth_ring 500.0)))
 
 
     ))

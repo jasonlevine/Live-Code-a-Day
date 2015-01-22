@@ -135,7 +135,7 @@
     (if (*metre2* beat 1.0)
       (set! dur (random '(1/4 2 1/2 ))))
 
-    (let ( (note (pc:relative (pcr) (cosr 5 3 1/2) scale))
+    (let ( (note (pc:relative (pcr) (cosr 5 4 1/3) scale))
           (vel (random  '(150 0 ))))
 
       (play piano note vel (* 1 dur))
