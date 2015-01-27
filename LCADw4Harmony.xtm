@@ -152,7 +152,7 @@
 (define bassline2
   (lambda (beat dur)
     (if (*metre1* beat 1.0)
-      (play subbass 48  120 dur))
+      (play piano 48  120 dur))
 
     ; (if (*metre1* beat (random '(2.0 4.0)))
     ;   (play subbass (- (pcr) 5)  110 dur))
@@ -162,7 +162,7 @@
 
     ; (if (*metre1* beat (random '(4)))
     ;   (play subbass (pc:relative (- (pcr) 12) (random '(3 4 -2)) scale)  110 (* 2 dur)))
-   (callback (*metro* (+ beat (* .5 dur))) 'bassline2 (+ beat dur) 1/8)
+   (callback (*metro* (+ beat (* .5 dur))) 'bassline2 (+ beat dur) 1/4)
     ))
 
 (bassline2 (*metro* 'get-beat 1) 1)

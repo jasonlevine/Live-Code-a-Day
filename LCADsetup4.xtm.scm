@@ -5,19 +5,21 @@
 
 ;;; Load the needed libraries -- this will take several minutes
 ;;;
+(sys:set-default-timeout (* 2 13953200))
 (sys:load "libs/core/instruments.xtm")
 (sys:load "libs/core/pc_ivl.xtm")
 (sys:load "libs/external/instruments_ext.xtm")
 
 ;;; Set up the constants we're going to need
 ;;;
-(define sample-path "/Users/jasonlevine/Code/extempore/LCAD/")
+(define sample-path "/Users/jasonlevine/Code/extempore/assets/")
 (define drum-path (string-append sample-path "salamander/OH/"))
 (define edrum-path (string-append sample-path "biolabsDubstepKit3/"))
 (define conga-path (string-append sample-path "Conga/"))
 (define djembe-path (string-append sample-path "Djembe/"))
 (define jawharp-path (string-append sample-path "Jaw_Harp/"))
 (define piano-regex "^.*([ABCDEFG][#b]?[0-9])v([0-9]+)\.wav$")
+(define strings-regex "^.*([ABCDEFG][#b]?[0-9])\.wav$")
 
 ;;; Add the samplers/instruments we're going to need to the dsp output
 ;;; callback
@@ -29,6 +31,7 @@
 (define-sampler jawharp sampler_note_hermite_c sampler_fx)
 
 (define-sampler piano sampler_note_hermite_c sampler_fx)
+(define-sampler strings sampler_note_hermite_c sampler_fx)
 (define-instrument subbass subbass_note_c subbass_fx)
 (define-instrument shimmer shimmer_pad_note_c shimmer_pad_fx)
 
@@ -283,10 +286,38 @@
 (load-sampler
   piano
   ;; Can't use a variable here; need the actual path string
-  "/Users/jasonlevine/Code/extempore/LCAD/salamander/SalamanderGrandPianoV3_44.1khz16bit/44.1khz16bit"
+  "/Users/jasonlevine/Code/extempore/assets/salamander/SalamanderGrandPianoV3_44.1khz16bit/44.1khz16bit"
   ;; 'sound bank' index
   0
   parse-salamander-piano)
+
+;;; Set up piano samples
+;;;
+(define parse-salamander-piano
+  (lambda (file-list)
+    (map (lambda (fname)
+           (let ((result (regex:matched fname piano-regex)))
+             (if (null? result)
+                 #f
+                 ;; load 4th velocity layer only
+                 (if (= (string->number (caddr result)) 4)
+                     (list fname
+                           (note-name-to-midi-number (cadr result))
+                           0
+                           0)
+                     #f))))
+         file-list)))
+
+(load-sampler
+  piano
+  ;; Can't use a variable here; need the actual path string
+  "/Users/jasonlevine/Code/extempore/assets/salamander/SalamanderGrandPianoV3_44.1khz16bit/44.1khz16bit"
+  ;; 'sound bank' index
+  0
+  parse-salamander-piano)
+
+
+
 
 ;; Now that everything is loaded, try out some notes ...
 (play-note (now) edrums 18 90 44100)

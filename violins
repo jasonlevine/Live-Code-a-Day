@@ -1,0 +1,61 @@
+(define scale (pc:scale 0 'ionian))
+
+(define root 1)
+(define pcr
+  (lambda ()
+    (pc:relative 48 root scale))) 
+
+
+(define *metro* (make-metro 100))
+
+(define *metre1* (make-metre '( 3 ) 1))
+(define *metre2* (make-metre '( 4 ) 1))
+(define *metre3* (make-metre '( 4 4 3 3 2 ) 1/2))
+
+(define progression
+  (lambda (beat dur degree )
+    (if (*metre1* beat 1.0)
+      (for-each (lambda (p)
+                (play strings p 120 (* 3.0 dur)))
+                (pc:make-chord 24 36 (random '(1)) (pc:diatonic 0 '- degree))))
+
+    (if (*metre2* beat 1.0)
+      (for-each (lambda (p)
+                (play strings p 120 (* 4.0 dur)))
+                (pc:make-chord 36 48 (random '(1)) (pc:diatonic 0 '- degree))))
+
+
+
+    
+      
+    (callback (*metro* (+ beat (* .5 dur))) 'progression (+ beat dur) dur
+              (random (cdr (assoc degree '((i iv v iii6 vi)
+                                           (ii v vii)
+                                           (iii6 vi)
+                                           (iv v ii vii i)
+                                           (v i vi)
+                                           (vii v i)
+                                           (vi ii))))))))
+
+(progression (*metro* 'get-beat 1) 1 'i)
+
+(play-note (now) strings 48 120 44100)
+
+
+(define kit
+  (lambda (beat dur)
+
+      (cond ((*metre3* beat 1.0) (play edrums (random 14 18) 150 dur))
+            ((*metre3* beat 2.0) (play edrums 20 130 dur))
+            ((*metre3* beat 3.0) (play edrums 45 120 dur))
+            ((*metre3* beat 4.0) (play edrums 46 150 dur)))
+    
+      (play edrums 20 120 dur)
+
+          (if (*metre3* beat 1.0)
+      )
+
+   (callback (*metro* (+ beat (* 0.5 dur))) 'kit (+ beat dur) 1/2)
+))
+
+  (kit (*metro* 'get-beat 1) 1/2) 
