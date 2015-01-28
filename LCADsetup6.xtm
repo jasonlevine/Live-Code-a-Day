@@ -16,6 +16,7 @@
 (define drum-path (string-append sample-path "salamander/OH/"))
 (define edrum-path (string-append sample-path "biolabsDubstepKit3/"))
 (define conga-path (string-append sample-path "Conga/"))
+(define perc-path (string-append sample-path "OneShotPercussionTools_SP_Mini/"))
 (define djembe-path (string-append sample-path "Djembe/"))
 (define jawharp-path (string-append sample-path "Jaw_Harp/"))
 (define piano-regex "^.*([ABCDEFG][#b]?[0-9])v([0-9]+)\.wav$")
@@ -28,6 +29,7 @@
 (define-sampler edrums sampler_note_hermite_c sampler_fx)
 (define-sampler conga sampler_note_hermite_c sampler_fx)
 (define-sampler djembe sampler_note_hermite_c sampler_fx)
+(define-sampler perc sampler_note_hermite_c sampler_fx)
 (define-sampler jawharp sampler_note_hermite_c sampler_fx)
 
 (define-sampler piano sampler_note_hermite_c sampler_fx)
@@ -42,6 +44,7 @@
            (edrums in time chan dat) 
             (conga in time chan dat)
             (djembe in time chan dat)
+            (perc in time chan dat)
             (strings in time chan dat)
              (piano in time chan dat)
               (subbass in time chan dat)
@@ -180,9 +183,6 @@
     (list "Single_Hit_15.wav" 24)))
 
 
-
-(play-note (now) conga 24 180 44100)
-
 (define add-conga-samples
   (lambda (data)
     (map (lambda (sample-pair)
@@ -190,6 +190,36 @@
          data)))
 
 (add-conga-samples conga-sample-data)
+
+;;perc
+(define add-perc-sample
+  (lambda (file-name const-name)
+    (set-sampler-index perc
+                       (string-append perc-path file-name)
+                       const-name
+                       0 0 0 1)))
+
+(define perc-sample-data
+  (list
+    (list "WoodenBongoes5Loud.wav" 10)
+    (list "SierraLeoneSlitDrum1A.wav" 11)
+    (list "Waterfall1A.wav" 12)
+    (list "FryingPan1B.wav" 13)
+    (list "PearlAgogoShaker1A.wav" 14)
+    (list "SilverShaker1A.wav" 15)
+    (list "TambourineDry1A.wav" 16)
+    (list "Cricket2C.wav" 17)
+    (list "HelixBowlLoud1A.wav" 18)
+    (list "WaterrShells1A.wav" 19)))
+
+
+(define add-perc-samples
+  (lambda (data)
+    (map (lambda (sample-pair)
+           (add-perc-sample (car sample-pair) (cadr sample-pair)))
+         data)))
+
+(add-perc-samples perc-sample-data)
 
 ;;djembe
 
@@ -293,7 +323,7 @@
 
 ;;; Set up string samples
 ;;;
-(define strings-regex "^.sus_([ABCDEFG][#b]?[0-9])\.wav$")
+(define strings-regex "^.*(sus_[ABCDEFG][#b]?[0-9])\.wav$")
 
 
 (define parse-strings
@@ -324,6 +354,6 @@
 ;; Now that everything is loaded, try out some notes ...
 (play-note (now) edrums 18 90 44100)
 (play-note (now) drums *gm-open-hi-hat* 140 44100)
-(play-note (now) piano 24 180 44100)
+(play-note (now) piano 40 180 44100)
 (play-note (now) drums *gm-snare* 110 44100)
 (play-note (now) subbass (random 36 50) 90 (* 1.0 *second*))

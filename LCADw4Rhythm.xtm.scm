@@ -2,11 +2,11 @@
 ;; define me first!
 (define *metro* (make-metro 100))
 
-(define *subdiv* 1/4)
-(define *metre1* (make-metre '( 3 3 3 1 1 1 ) 1/2))
-(define *metre2* (make-metre '( 3 2 1) 1/2))
-(define *metre3* (make-metre '( 3 3 1 2) 1/4))
-(define *metre4* (make-metre '( 4 2 1 1) 1/2))
+(define *subdiv* 1)
+(define *metre1* (make-metre '( 3 1 2 3 1 3 ) *subdiv*))
+(define *metre2* (make-metre '( 3 2 1) *subdiv*))
+(define *metre3* (make-metre '( 3 3 1 2) *subdiv*))
+(define *metre4* (make-metre '( 3 3 1 3 3 2) *subdiv*))
 
 
 
@@ -38,9 +38,11 @@
   (lambda (beat dur)
 
       (cond ((*metre1* beat 1.0) (play edrums (random 14 18) 150 dur))
-            ((*metre1* beat 2.0) (play drums 20 130 dur))
-            ((*metre1* beat 3.0) (play drums 46 120 dur))
+            ((*metre1* beat 2.0) (play perc 11 130 dur))
+            ((*metre1* beat 3.0) (play perc (random '(10 14)) 100 dur))
             ((*metre1* beat 4.0) (play drums 46 150 dur)))
+
+      (if (*metre4* beat 1.0) (play perc 16 100 dur))
 
       ; (cond ((*metre1* beat 1.0) (rampDegree 10.0))
       ;       ((*metre2* beat 1.0) (rampDegree 21.0))
@@ -52,7 +54,7 @@
     ; )
 
     ;(play doumbek (rampr 20 10 1/8) 140 dur)
-    (play edrums 20 130 dur)
+    (play perc 12 (cosr 100 20 1/4) dur)
     
 
    (callback (*metro* (+ beat (* 0.5 dur))) 'kit (+ beat dur) 1/4)
@@ -67,8 +69,8 @@
 (define kit2
   (lambda (beat dur)
       (cond ((*metre1* beat 1.0) (play conga (random 10 11) (random '(140 0)) dur))
-             ((*metre2* beat 3.0) (play conga (random 16 17) (random '(140 0)) dur))
-             ((*metre3* beat 4.0) (play conga (random 22 13) (random '(140 0)) dur)))
+             ((*metre2* beat 1.0) (play conga (random 16 17) (random '(120 0)) dur))
+             ((*metre3* beat 1.0) (play conga (random 22 13) (random '(120 0)) dur)))
 
      ; (play djembe (random 20 25) (random 80 130) 1/4)
 
@@ -84,15 +86,15 @@
 
 (define perc1
   (lambda (beat dur)
-      (if (*metre3* beat 1.0) (play conga (random 50 54) (random '(100 120)) dur))
-      (if (*metre2* beat 1.0) (play conga (rampr 30 12 dur) (random '(120 110)) dur))
-      (if (*metre1* beat 1.0) (play djembe (rampr 20 13 dur) (random '(100 120)) dur))
-     (if (*metre1* beat 2.0) (play drums (random 10 17) (random '(100 130)) dur))
+      (if (*metre3* beat 1.0) (play piano (random 50 54) (random '(100 130)) dur))
+      (if (*metre2* beat 1.0) (play piano (rampr 30 12 dur) (random '(130 110)) dur))
+      (if (*metre1* beat 1.0) (play piano (rampr 20 13 dur) (random '(100 130)) dur))
+     (if (*metre1* beat 2.0) (play piano (random 10 17) (random '(100 130)) dur))
              
-   (callback (*metro* (+ beat (* 0.5 dur))) 'perc1 (+ beat dur) 1/8)
+   (callback (*metro* (+ beat (* 0.5 dur))) 'perc1 (+ beat dur) dur)
 ))
 
-(perc1 (*metro* 'get-beat 1) 1)
+(perc1 (*metro* 'get-beat 1) 1/4)
 
 (define metre-change
   (lambda (beat)
