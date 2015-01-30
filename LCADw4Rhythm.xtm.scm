@@ -1,9 +1,9 @@
 ;;;;; drums
 ;; define me first!
-(define *metro* (make-metro 100))
+(define *metro* (make-metro 90))
 
-(define *subdiv* 1)
-(define *metre1* (make-metre '( 3 1 2 3 1 3 ) *subdiv*))
+(define *subdiv* 1/4)
+(define *metre1* (make-metre '( 4 2 3 1 3 ) *subdiv*))
 (define *metre2* (make-metre '( 3 2 1) *subdiv*))
 (define *metre3* (make-metre '( 3 3 1 2) *subdiv*))
 (define *metre4* (make-metre '( 3 3 1 3 3 2) *subdiv*))
@@ -54,23 +54,23 @@
     ; )
 
     ;(play doumbek (rampr 20 10 1/8) 140 dur)
-    (play perc 12 (cosr 100 20 1/4) dur)
+    (play edrums 20 (cosr 100 20 1/4) dur)
     
 
    (callback (*metro* (+ beat (* 0.5 dur))) 'kit (+ beat dur) 1/4)
 ))
 
 
-(kit (*metro* 'get-beat 1) 1/2) 
+(kit (*metro* 'get-beat 1) 1/4) 
 
 
 
 
 (define kit2
   (lambda (beat dur)
-      (cond ((*metre1* beat 1.0) (play conga (random 10 11) (random '(140 0)) dur))
-             ((*metre2* beat 1.0) (play conga (random 16 17) (random '(120 0)) dur))
-             ((*metre3* beat 1.0) (play conga (random 22 13) (random '(120 0)) dur)))
+      (cond ((*metre1* beat 1.0) (play djembe (random 10 11) (random '(140 0)) dur))
+             ((*metre2* beat 1.0) (play djembe (random 16 17) (random '(120 0)) dur))
+             ((*metre3* beat 1.0) (play djembe (random 22 13) (random '(120 0)) dur)))
 
      ; (play djembe (random 20 25) (random 80 130) 1/4)
 
@@ -79,7 +79,7 @@
    (callback (*metro* (+ beat (* 0.5 dur))) 'kit2 (+ beat dur) dur)
 ))
 
-(kit2 (*metro* 'get-beat 1) 1/4)
+(kit2 (*metro* 'get-beat 1) 1/2)
 
 (play conga (random 10 15) 140 1)
 
@@ -121,7 +121,7 @@
       (set! *metre2* (make-metre '( 1 1 1 2  ) *subdiv*))
       (set! *metre1* (make-metre '( 6 6 4 4 ) *subdiv*)))
       ; (println *subdiv*)
-   (callback (*metro* (+ beat 0.5)) 'metre-c hange (+ beat 1))))
+   (callback (*metro* (+ beat 0.5)) 'metre-change (+ beat 1))))
 
 (metre-change (*metro* 'get-beat 1) 1)
 
