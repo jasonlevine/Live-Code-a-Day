@@ -44,14 +44,18 @@
 
 ;;ring
 (bind-func ring
-	(lambda (size:double n:double trans:double rot:double)
+	(lambda (size:double n:double trans:double rot:double col:double)
 		(let ((i:double 1.0))
       		(dotimes (i n)
 		      (glPushMatrix)
 		      (glRotated  (* i (/ 360.0 n)) 0.0 0.0 1.0)
-		      (glTranslated 0.0  (+ trans size) 0.0)
-		      (color_wave (+ i rot 30000.0))
+		      (glTranslated 0.0  (+ trans size (wave (+ (* i col) 10000.0 ) 1.0)) 0.0)
+		      ;(color_wave (+ i rot 30000.0))
+		      (glPushMatrix)
+			  ;(glRotated (wave (+ (* (wave 2000000.0 1.0) 1000.0) 100000.0 i) 360.0) (wave (+ 120000.0 i) 1.0) 1.0 0.0)
+		      (glColor3d 0.0 (wave (+ (* i col) 10000.0 ) 0.5) 0.2)
 		      (circle size 22.0)
+		      (glPopMatrix)
 		      (glPopMatrix)))))
 
 
@@ -63,26 +67,39 @@
 (bind-val fourth_ring double 160.0)
 (bind-val fifth_ring double 340.0)
 
-(set! first_ring 7.0)
-(set! second_ring  25.0)
-(set! third_ring  70.0)
-(set! fourth_ring  160.0)
-(set! fifth_ring  340.0)
+(set! first_ring 70.0)
+(set! second_ring  250.0)
+(set! third_ring  700.0)
+(set! fourth_ring  1600.0)
+(set! fifth_ring  3400.0)
 
 ;;mandala
 (bind-func mandala
-	(lambda (size:double)
+	(lambda (size:double id:double)
 		(glPushMatrix)
 		(glScaled size size 1.0)
 
-		(color_wave 30000.0)
+		;(color_wave 30000.0)
+		(glColor3d 1.0 (wave 100000.0 0.5) 0.2)
+		(glPushMatrix)
+		(glTranslated (wave 100000.0 10.0) 0.0 0.0)
 		(circle 1.0 22.0)
+		(glPopMatrix)
 
-		(ring 0.75 7.0 1.0 7.0) 
-		(ring 0.5 18.0 2.5 25.0)
-		(ring 0.25 45.0 3.5 70.0)
-		(ring 0.125 90.0 4.0 160.0)
-		(ring 0.0625 180.0 4.25 340.0)
+		;(glColor3d 0.8 (wave 110000.0 0.6) 0.4)
+		(ring 0.75 7.0 1.0 7.0 (+ 2.0 id))
+
+		;(glColor3d 0.7 (wave 120000.0 0.7) 0.3) 
+		(ring 0.5 18.0 2.5 25.0 (+ 4.0 id))
+
+		;(glColor3d 0.6 (wave 130000.0 0.8) 0.2)
+		(ring 0.25 45.0 3.5 70.0 (+ 6.0 id))
+
+		;(glColor3d 0.5 (wave 140000.0 0.9) 0.1)
+		(ring 0.125 90.0 4.0 160.0 (+ 8.0 id))
+
+		;(glColor3d 0.4 (wave 150000.0 1.0) 0.0)
+		(ring 0.0625 180.0 4.25 340.0 (+ 10.0 id))
 
 
 		(glPopMatrix)
@@ -104,7 +121,7 @@
       			;(glColor3d (wave (+ 20000.0 (* 1.5 i)) 1.0) (wave (+ 90000.0 (* 4.0 i)) 1.0) (wave (+ 50000.0 (* 1.0 i)) 1.0))
 		      ;(glScaled size size 1.0)
 		      ;(mandala2)
-		      (mandala size)
+		      (mandala size i)
 	
 		      (glPopMatrix)))))
 
@@ -124,7 +141,7 @@
      
       (glPushMatrix)
       (glScaled 0.5 0.5 1.0)
-       (mandala 1.0)
+       (mandala 1.0 0.0)
       (mandala_ring 0.75 7.0 7.0 first_ring)
       (mandala_ring 0.5 19.0 13.0 second_ring)
       (mandala_ring 0.25 44.0 16.5 third_ring)
