@@ -2,12 +2,11 @@
 ;; define me first!
 (define *metro* (make-metro 90))
 
-(define *subdiv* 1/4)
+(define *subdiv* 1/2)
 (define *metre1* (make-metre '( 4 2 3 1 3 ) *subdiv*))
 (define *metre2* (make-metre '( 3 2 1) *subdiv*))
 (define *metre3* (make-metre '( 3 3 1 2) *subdiv*))
 (define *metre4* (make-metre '( 3 3 1 3 3 2) *subdiv*))
-
 
 
 (define *degree* 0.0)
@@ -44,10 +43,10 @@
 
       (if (*metre4* beat 1.0) (play perc 16 100 dur))
 
-      ; (cond ((*metre1* beat 1.0) (rampDegree 10.0))
-      ;       ((*metre2* beat 1.0) (rampDegree 21.0))
-      ;       ((*metre3* beat 3.0) (rampDegree 23.0))
-      ;       ((*metre3* beat 4.0) (rampDegree 46.0)))
+       (cond ((*metre1* beat 1.0) (set_curr_note -14))
+             ((*metre2* beat 1.0) (set_curr_note 11))
+             ((*metre3* beat 3.0) (set_curr_note 24))
+             ((*metre3* beat 4.0) (set_curr_note 96)))
 
       ;(play doumbek (cosr 20 10 dur) 140 dur)
 

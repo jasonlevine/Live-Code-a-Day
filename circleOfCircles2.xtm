@@ -42,6 +42,17 @@
             (* (cos radians) radius))))
 		(glEnd))))
 
+(bind-func circle
+	(lambda (radius res)
+		(glBegin GL_LINE_LOOP)
+		(let ((i:double 0.0))
+			(dotimes (i res)
+				(let ((radians (* (/ i res) 6.283)))
+					(glVertex2d (* (sin radians) (+ radius (wave (+ i 10000.0 ) 0.4))) 
+            (* (cos radians) (+ radius (wave (+ i 10000.0 ) 0.4))))))
+		(glEnd))))
+
+
 ;;ring
 (bind-func ring
 	(lambda (size:double n:double trans:double rot:double col:double)
@@ -49,12 +60,12 @@
       		(dotimes (i n)
 		      (glPushMatrix)
 		      (glRotated  (* i (/ 360.0 n)) 0.0 0.0 1.0)
-		      (glTranslated 0.0  (+ trans size (wave (+ (* i col) 10000.0 ) 1.0)) 0.0)
+		      (glTranslated 0.0  (+ trans size (wave (+ (* i col) 1000.0 ) 1.0)) 0.0)
 		      ;(color_wave (+ i rot 30000.0))
 		      (glPushMatrix)
 			  ;(glRotated (wave (+ (* (wave 2000000.0 1.0) 1000.0) 100000.0 i) 360.0) (wave (+ 120000.0 i) 1.0) 1.0 0.0)
 		      (glColor3d 0.0 (wave (+ (* i col) 10000.0 ) 0.5) 0.2)
-		      (circle size 22.0)
+		      (circle size 3.0)
 		      (glPopMatrix)
 		      (glPopMatrix)))))
 
@@ -82,8 +93,8 @@
 		;(color_wave 30000.0)
 		(glColor3d 1.0 (wave 100000.0 0.5) 0.2)
 		(glPushMatrix)
-		(glTranslated (wave 100000.0 10.0) 0.0 0.0)
-		(circle 1.0 22.0)
+		(glRotated (wave 100000.0 360.0) 0.0 0.0 1.0)
+		(circle 1.0 7.0)
 		(glPopMatrix)
 
 		;(glColor3d 0.8 (wave 110000.0 0.6) 0.4)
@@ -116,7 +127,7 @@
       		(dotimes (i n)
 		      (glPushMatrix)
 		      (glRotated  (+ (* i (/ 360.0 n)) rot) 0.0 0.0 1.0)
-		      (glTranslated 0.0 (+ trans size) 0.0)
+		      (glTranslated 0.0 (+ trans size (wave (+ i 10000.0 ) 1.0)) 0.0)
 		      
       			;(glColor3d (wave (+ 20000.0 (* 1.5 i)) 1.0) (wave (+ 90000.0 (* 4.0 i)) 1.0) (wave (+ 50000.0 (* 1.0 i)) 1.0))
 		      ;(glScaled size size 1.0)
@@ -138,7 +149,8 @@
     (lambda ()
       (glClear (+ GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT))
       (glLoadIdentity)
-     
+           (inc_counter)
+      (dec_counter)
       (glPushMatrix)
       (glScaled 0.5 0.5 1.0)
        (mandala 1.0 0.0)
@@ -148,6 +160,7 @@
       (mandala_ring 0.125 90.0 18.25 fourth_ring)
      ; (mandala_ring 0.0625 180.0 19.25 fourth_ring)
       (glPopMatrix)
+
 
       ))
 
