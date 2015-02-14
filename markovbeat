@@ -1,0 +1,15 @@
+(define drum 10)
+
+
+(define markov-beat
+  (lambda (beat dur)
+	(set! drums (random (cdr (assoc drums '((10 20)
+                                           (20 46 10 20 20)
+                                           (46 20))))))
+
+  	(play drums drum 130 dur)
+
+  (callback (*metro* (+ beat (* 0.5 dur))) 'markov-beat (+ beat dur) dur)
+))
+
+(markov-beat (*metro* 'get-beat 1) 1/2)

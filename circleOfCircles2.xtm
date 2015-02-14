@@ -9,10 +9,24 @@
 
 (initgl)
 
+(bind-val counter double 0.0)
+(bind-func inc_counter
+  (lambda ()
+    (set! counter (+ counter (ftod (dsp.left))))))
+
+(bind-func dec_counter
+  (lambda ()
+    (set! counter (- counter 20.0))))
+
+
 ;;animation functions
 (bind-func wave
 	(lambda (wavelength:double amplitude:double)
 		(* amplitude (+ 0.5 (* 0.5 (cos (/ (i64tod (now)) wavelength)))))))
+
+(bind-func wave
+	(lambda (wavelength:double amplitude:double)
+		(* amplitude (+ 0.5 (* 0.5 (cos (/ (* 1000.0 (ftod (dsp.left))) wavelength)))))))
 
 (bind-func wave
 	(lambda (wavelength:double amplitude:double)
@@ -150,7 +164,7 @@
       (glClear (+ GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT))
       (glLoadIdentity)
            (inc_counter)
-      (dec_counter)
+      ;(dec_counter)
       (glPushMatrix)
       (glScaled 0.5 0.5 1.0)
        (mandala 1.0 0.0)
