@@ -1,0 +1,212 @@
+(define glctx (gl:make-ctx ":0.0" #f 0.0 0.0 640.0 480.0))
+
+(bind-func initgl
+  (lambda ()
+    (glMatrixMode GL_PROJECTION)
+    (glLoadIdentity)
+    (glOrtho -6.4 6.4 -4.8 4.8 -5.0 5.0)
+    (glMatrixMode GL_MODELVIEW)))
+
+(initgl)
+
+(bind-func my-gl-loop
+    (lambda ()
+      	(glClear (+ GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT))
+      	(glLoadIdentity)
+      
+      	(glPushMatrix)
+      	;(glRotated (i64tod (modulo (/ (now) 500) 360)) 0.5 0.1 1.0)
+
+      	(glBegin GL_LINE_STRIP)
+		(let ((i:double 0.0) (n:double 30.0))
+			(dotimes (i (+ n 1))
+				(let ((j:double 0.0))
+				(dotimes (j (+ n 1))
+					(let ((u (* i (/ TWOPI n))) (v (* j (/ TWOPI n))))
+						(let (  (x (* (sin u) (cos v) 1.0))
+								(y (+ (sin v) (* (cos u) (cos v) 1.0)))
+								(z (+ (cos v) (* (sin v) (sin u) 1.0))))
+						(glVertex3d x y z)))))))
+		(glEnd)
+
+      	(glPopMatrix)))
+
+(bind-func my-gl-loop
+    (lambda ()
+      	(glClear (+ GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT))
+      	(glLoadIdentity)
+      
+      	(glPushMatrix)
+      	(glRotated (i64tod (modulo (/ (now) 200) 360)) 0.0 1.0 0.0)
+
+      	(glBegin GL_LINE_STRIP)
+		(let ((i:double 0.0) (n:double 100.0))
+			(dotimes (i n)
+				(let ((u (* i (/ TWOPI n))))
+					(let (  (x (sin u))
+							(y (cos u))))
+						(glVertex2d x y)))))
+		(glEnd)
+
+      	(glPopMatrix)))
+
+(bind-func my-gl-loop
+  (lambda ()
+      (glClear (+ GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT))
+      (glLoadIdentity)  
+      (glRotated (i64tod (modulo (/ (now) 500) 360)) 0.5 0.1 1.0)    
+      (glScaled 2.5 2.5 2.5)      
+      (glBegin GL_LINE_STRIP)
+      (let ((i:double 0.0) (j:double 0.0)
+            (n:double (+ 102.0 (* 100. (cos (* .00001 (i64tod (now)))))))
+            (u 0.0) (v 0.0) (x 0.0) (y 0.0) (z 0.0))              
+        (dotimes (i (+ n 1.0))
+          (dotimes (j (+ n 1.0))
+            (set! u (* i (/ TWOPI n)))
+            (set! v (* j (/ TWOPI n)))
+            (set! x (* (sin u) (cos v)))
+            (set! y (+ (sin v) (* (cos u) (cos v))))
+            (set! z (+ (cos v) (* (sin v) (sin u))))
+            (glVertex3d x y z))))
+      (glEnd)))
+
+(bind-func my-gl-loop
+  (lambda ()
+      (glClear (+ GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT))
+      (glLoadIdentity)
+      ;(glRotated (i64tod (modulo (/ (now) 1000) 360)) 0.5 0.1 0.3)
+      (glTranslated 0.0 -1.0 1.0)  
+      (glScaled 1.5 1.5 1.5)
+      (glRotated 260.0 1.0 0.0 0.0)
+            
+      (glBegin GL_LINE_STRIP)
+      (let ((i:double 0.0) (j:double 0.0)
+            (n:double 50.0)
+            (u 0.0) (v 0.0) (x 0.0) (y 0.0) (z 0.0)
+            (morph (* 3.0 (+ 0.5 (* 0.5 (sin (/ (i64tod (now)) 100000.0))))))
+            (morph2 (- morph 1.0))
+            (morph3 (- morph 2.0)))              
+        (dotimes (i (+ n 1.0))
+          (dotimes (j (+ n 1.0))
+            (cond ((< morph 1.0)
+              (set! u (+ (* (u2 j n) morph) (* (- 1.0 morph) (u1 j n))))
+              (set! v (+ (* (v2 i n) morph) (* (- 1.0 morph) (v1 i n))))
+              (set! x (+ (* (x2 u v) morph) (* (- 1.0 morph) (x1 u v))))
+              (set! y (+ (* (y2 u v) morph) (* (- 1.0 morph) (y1 u v))))
+              (set! z (+ (* (z2 u v) morph) (* (- 1.0 morph) (z1 u v)))))
+            ((and (>= morph 1.0) (< morph 2.0))
+              (set! u (+ (* (u3 j n) morph2) (* (- 1.0 morph2) (u2 j n))))
+              (set! v (+ (* (v3 i n) morph2) (* (- 1.0 morph2) (v2 i n))))
+              (set! x (+ (* (x3 u v) morph2) (* (- 1.0 morph2) (x2 u v))))
+              (set! y (+ (* (y3 u v) morph2) (* (- 1.0 morph2) (y2 u v))))
+              (set! z (+ (* (z3 u v) morph2) (* (- 1.0 morph2) (z2 u v)))))
+            ((and (>= morph 2.0) (< morph 3.0))
+              (set! u (+ (* (u4 j n) morph3) (* (- 1.0 morph3) (u3 j n))))
+              (set! v (+ (* (v4 i n) morph3) (* (- 1.0 morph3) (v3 i n))))
+              (set! x (+ (* (x4 u v) morph3) (* (- 1.0 morph3) (x3 u v))))
+              (set! y (+ (* (y4 u v) morph3) (* (- 1.0 morph3) (y3 u v))))
+              (set! z (+ (* (z4 u v) morph3) (* (- 1.0 morph3) (z3 u v)))))
+
+            )
+
+            (glColor3d (/ i n) 0.3 0.2)
+            (glVertex3d x y z))))
+      (glEnd)))
+ 
+
+
+
+ (bind-func u1
+ 	(lambda (j:double n:double)
+ 		(* j (/ TWOPI n))))
+
+
+ (bind-func v1
+ 	(lambda (i:double n:double)
+ 		(* i (/ PI n))))
+
+ (bind-func x1
+ 	(lambda (u:double v:double)
+ 		(cos u)))
+
+ (bind-func y1
+ 	(lambda (u:double v:double)
+ 		(sin u)))
+
+ (bind-func z1
+ 	(lambda (u:double v:double)
+ 		v))
+
+
+
+ (bind-func u2
+ 	(lambda (j:double n:double)
+ 		(* j (/ TWOPI n))))
+
+ (bind-func v2
+ 	(lambda (i:double n:double)
+ 		(* i (/ PI n))))
+
+ (bind-func x2
+ 	(lambda (u:double v:double)
+ 		(* (sin v) (cos u))))
+
+ (bind-func y2
+ 	(lambda (u:double v:double)
+ 		(sin u)))
+
+ (bind-func z2
+ 	(lambda (u:double v:double)
+ 		v))
+
+
+  (bind-func u3
+  (lambda (j:double n:double)
+    (* j (/ TWOPI n))))
+
+ (bind-func v3
+  (lambda (i:double n:double)
+    (* i (/ PI n))))
+
+ (bind-func x3
+  (lambda (u:double v:double)
+    (* (sin v) (cos u))))
+
+ (bind-func y3
+  (lambda (u:double v:double)
+    (* (sin v) (sin u))))
+
+ (bind-func z3
+  (lambda (u:double v:double)
+    v))
+
+
+
+  (bind-func u4
+  (lambda (j:double n:double)
+    (* j (/ TWOPI n))))
+
+ (bind-func v4
+  (lambda (i:double n:double)
+    (* i (/ PI n))))
+
+ (bind-func x4
+  (lambda (u:double v:double)
+    (* (sin v) (cos u))))
+
+ (bind-func y4
+  (lambda (u:double v:double)
+    (* (sin v) (sin u))))
+
+ (bind-func z4
+  (lambda (u:double v:double)
+    (cos v)))
+
+;; standard impromptu callback                                                
+(define opengl-test
+  (lambda ()
+    (my-gl-loop)
+    (gl:swap-buffers glctx)
+    (callback (+ (now) 500) 'opengl-test)))
+
+(opengl-test)

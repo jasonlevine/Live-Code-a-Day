@@ -78,19 +78,16 @@
   (lambda (beat dur)
 
     (if (= (modulo beat 8) 0)
-      (set! root (random (cdr (assoc root '((i iv v iii vi)
-                                           (ii v vii)
-                                           (iii vi)
-                                           (iv v ii vii i)
-                                           (v i vi)
-                                           (vii v i)
-                                           (vi ii)))))))
+      (set! root (random (cdr (assoc root '((1 5)
+                                           (5 2)
+                                           (2 7)
+                                           (7 1)))))))
 
-    (if (= (modulo beat 8) 0) 
-      (for-each (lambda (p)
-            (play piano p 110 dur))
-          (pc:make-chord (pcr) (+ (pcr) 12) (pc:diatonic 0 '^ root)))
-      )
+ ;   (if (= (modulo beat 8) 0) 
+  ;    (for-each (lambda (p)
+   ;         (play piano p 110 dur))
+    ;      (pc:make-chord (pcr) (+ (pcr) 12) 'scale))
+     ; )
 
     (callback (*metro* (+ beat (* .5 dur))) 'chords (+ beat dur) dur)
     ))
@@ -151,7 +148,7 @@
 (define bassline2
   (lambda (beat dur)
     (if (*metre1* beat 1.0)
-      (play piano 48  120 dur))
+      (play subbass 48  120 dur))
 
     ; (if (*metre1* beat (random '(2.0 4.0)))
     ;   (play subbass (- (pcr) 5)  110 dur))
@@ -191,14 +188,14 @@
 (define melody1
   (lambda (beat dur octave)
     (if (= (modulo beat 1) 0)
-      (set! dur (random '(2 1/4  1/8))))
-    (play fmsynth (pc:relative (+ (pcr) (* octave 24) (random '(0.0 1.0))) 
+      (set! dur (random '( 1/6  1/3))))
+    (strings-djembe beat (pc:relative (+ (pcr) (* octave 24) (random '(0.0 1.0))) 
                   (* (random '(1 -1 2)) ( modulo  (/ (modulo beat 8) dur) 5)) scale) 
-                  (random '(40 10)) dur)
-    (callback (*metro* (+ beat (* .6 dur))) 'melody1 (+ beat dur) dur octave )
+                  (random '(140 100)) dur)
+    (callback (*metro* (+ beat (* .6 dur))) 'melody 1 (+ beat dur) dur octave )
     ))
 
-(melody1 (*metro* 'get-beat 1) 1 3)
+(melody1 (*metro* 'get-beat 1) 1 1)
 
 
 (define bassline

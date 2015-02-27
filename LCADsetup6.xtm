@@ -7,14 +7,13 @@
 ;;;
 (sys:set-default-timeout (* 2 13953200))
 
-
-
 (sys:load "libs/core/instruments.xtm")
 (sys:load "libs/core/pc_ivl.xtm")
 (sys:load "libs/external/instruments_ext.xtm")
 
 ;;; Set up the constants we're going to need
 ;;;
+
 
 (define sample-path "/Users/jasonlevine/Code/extempore/assets/")
 (define drum-path (string-append sample-path "salamander/OH/"))
@@ -62,18 +61,19 @@
       ;; once every 'FRAMES'
       (if (= 0 (% time FRAMES))
           (begin (set! left (rms.left))
-                     (set! right (rms.right))))
+                 (set! right (rms.right))))
       ;; rms passes signal straight through
       (rms chan
-           (+ (drums in time chan dat)
-           (edrums in time chan dat) 
-            (conga in time chan dat)
+           (+ 
+            (strings in time chan dat) 
+            (piano in time chan dat) 
+            (drums in time chan dat) 
+            (edrums in time chan dat)
             (djembe in time chan dat)
+            (conga in time chan dat)
+            (fmsynth in time chan dat)
             (perc in time chan dat)
-            (strings in time chan dat)
-             (piano in time chan dat)
-              (subbass in time chan dat)
-              (fmsynth in time chan dat))))))
+            (subbass in time chan dat))))))
 
 
 ;(bind-func dsp:DSP

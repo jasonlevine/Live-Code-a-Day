@@ -1,8 +1,10 @@
 ;;;week3 globals
 
-define scale (pc:scale 8 'phrygian))
+(sys:load "libs/core/pc_ivl.xtm")
 
-(de(fine wave
+(define scale (pc:scale 8 'phrygian))
+
+(define wave
   (lambda (min max wavelength)
     (let ((freq (/ 1 wavelength)) (range (- max min)))
       (let ((sinNorm (+ 0.5 (* 0.5 (sin (* (now) freq))))))
@@ -39,24 +41,22 @@ define scale (pc:scale 8 'phrygian))
   (lambda (beat dur)
 
     (if (= (modulo beat 4) 0)
-      (set! root (random (cdr (assoc root '((3 5) (5 1) (1 4) (4 3) ) )))))
+      (set! root (random (cdr (assoc root '((1 2) (2 3) (3 5) (5 1) ) )))))
 
     ; (if (= (modulo beat 2) 0)
     ;   (play shimmer (+ (pcr) 0) (wave 20 40 1) 1))
 
-    (if (= (modulo beat 1) 0)
-      
- 
+    (if (*metre1* beat 1)
       (for-each (lambda (p)
-                (play piano p (wave 90 130 (* 3 dur)) dur))
-                (pc:make-chord (pcr) (+ (pcr) 24) (random '(3 2)) scale))
+                (play piano p (wave 140 160 (* 3 dur)) dur))
+                (pc:make-chord (pcr) (+ (pcr) 24) (random '(3 2)) scale)))
 
     (callback (*metro* (+ beat (* .5 dur))) 'chords (+ beat dur) dur)
     ; (cb beat dur 'chords)
     ))
 
 
-(chords (*metro* 'get-beat 1) 4)
+(chords (*metro* 'get-beat 1) 1)
 
 (define bassline
   (lambda (beat dur)
@@ -71,7 +71,7 @@ define scale (pc:scale 8 'phrygian))
   (lambda (beat dur)
     (if (= (modulo beat 4) 0)
       (play sawbass ( + (pcr) 12) 100 2))
-    ;(callback (*metro* (+ beat (* .5 dur))) 'bassline (+ beat dur) dur)
+    (callback (*metro* (+ beat (* .5 dur))) 'bassline (+ beat dur) dur)
     ))
 
 (bassline (*metro* 'get-beat 1) 1)
@@ -80,7 +80,7 @@ define scale (pc:scale 8 'phrygian))
   (lambda (beat dur octave)
     (if (= (modulo beat 1) 0)
       (set! dur (random '(3/2 1/2))))
-    (play piano (pc:relative (+ (pcr) (* octave 12)) 
+    (play fmsynth (pc:relative (+ (pcr) (* octave 12)) 
                   (* (random '(-1 1 2)) ( modulo  (/ (modulo beat 8) dur) 8)) scale) 
                   (random '(50 0)) dur)
     (callback (*metro* (+ beat (* .6 dur))) 'melody (+ beat dur) dur octave )
