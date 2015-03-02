@@ -1,0 +1,43 @@
+
+(define synth-attack
+	(lambda (beat dur)
+		(let ((morph (* 1.0 (+ 0.5 (* 0.5 (sin (/ (now) 100000.0)))))))
+			(play fmsynth 60 40 dur 1.0 (+ 5.0 (* 20.0 morph)))
+			(play fmsynth 64 40 dur 1.0)
+			(play fmsynth 67 40 dur 1.0)
+			(play fmsynth 69 40 dur 1.0)
+			(play fmsynth 72 40 dur 1.0))
+		(callback (*metro* (+ beat (* 0.5 dur))) 'synth-attack (+ beat dur) dur)
+))
+
+(define synth-attack
+	(lambda (beat dur)
+		(let ((i 0) (n 5))
+			(dotimes (i n)
+				(let ((morph (* 1.0 (+ 0.5 (* 0.5 (sin (/ (now) (+ (* i 100.0) 100000.0))))))))
+					(play fmsynth (pc:relative 60 (* i 2.0) (pc:scale 1 'aeolian)) 
+						40 dur 1.0 (+ 5.0 (* 20.0 morph))))))
+		(callback (*metro* (+ beat (* 0.5 dur))) 'synth-attack (+ beat dur) dur)
+))
+
+
+(synth-attack (*metro* 'get-beat 1) 1/4) 
+
+
+(play-note (now) shimmer 60 40 44100)
+(play-note (now) shimmer 64 40 44100)
+(play-note (now) shimmer 67 40 44100)
+(play-note (now) shimmer 69 40 44100)
+(play-note (now) shimmer 72 40 44100)
+
+(play-note (now) sawbass 60 80 44100)
+(play-note (now) sawbass 64 80 44100)
+(play-note (now) sawbass 67 80 44100)
+(play-note (now) sawbass 69 80 44100)
+(play-note (now) sawbass 72 80 44100)
+
+(play-note (now) subbass 60 100 44100)
+(play-note (now) subbass 64 100 44100)
+(play-note (now) subbass 67 100 44100)
+(play-note (now) subbass 69 100 44100)
+(play-note (now) subbass 72 100 44100)

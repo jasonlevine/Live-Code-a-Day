@@ -11,7 +11,7 @@
         (+ min (* sinNorm range)) 
     ))))
 
-(define root 3)
+(define root 1)
 (define pcr
   (lambda ()
     (pc:relative 48 root scale))) 
@@ -41,7 +41,7 @@
   (lambda (beat dur)
 
     (if (= (modulo beat 4) 0)
-      (set! root (random (cdr (assoc root '((1 2) (2 3) (3 5) (5 1) ) )))))
+      (set! root (random (cdr (assoc root '((1 5) (5 3) (3 7) (7 1) ) )))))
 
     ; (if (= (modulo beat 2) 0)
     ;   (play shimmer (+ (pcr) 0) (wave 20 40 1) 1))
@@ -49,9 +49,10 @@
     (if (*metre1* beat 1)
       (for-each (lambda (p)
                 (play piano p (wave 140 160 (* 3 dur)) dur))
-                (pc:make-chord (pcr) (+ (pcr) 24) (random '(3 2)) scale)))
+                (pc:make-chord (pcr) (+ (pcr) 12) (random '(3 2)) scale)))
 
-    (callback (*metro* (+ beat (* .5 dur))) 'chords (+ beat dur) dur)
+    
+    (callback (*metro* (+ beat (* .5 dur))) 'chords (+ beat dur) 1/8)
     ; (cb beat dur 'chords)
     ))
 
@@ -60,8 +61,8 @@
 
 (define bassline
   (lambda (beat dur)
-    (if (< (modulo beat 4) 3)
-      (play sawbass ( - (pcr) 12) 100 1/4))
+    (if (*metre1* beat 1)
+      (play subbass ( - (pcr) 12) 110 1/4))
     (callback (*metro* (+ beat (* .5 dur))) 'bassline (+ beat dur) dur)
     ))
 
@@ -79,7 +80,7 @@
 (define melody
   (lambda (beat dur octave)
     (if (= (modulo beat 1) 0)
-      (set! dur (random '(3/2 1/2))))
+      (set! dur (random '(1/2))))
     (play fmsynth (pc:relative (+ (pcr) (* octave 12)) 
                   (* (random '(-1 1 2)) ( modulo  (/ (modulo beat 8) dur) 8)) scale) 
                   (random '(50 0)) dur)
@@ -88,6 +89,16 @@
 
 (melody (*metro* 'get-beat 1) 1 3)
 
+
+(define melody
+  (lambda (beat dur octave)
+    (play fmsynth (pc:relative (+ (pcr) (* octave 12)) 
+                  (cosr 5 3 3/2) scale) 
+                  (random '(40 10)) dur)
+    (callback (*metro* (+ beat (* .6 dur))) 'melody (+ beat dur) dur octave )
+    ))
+
+(melody (*metro* 'get-beat 1) 1/4 2)
 
 (define bassline
   (lambda (beat dur)
