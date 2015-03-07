@@ -1,0 +1,43 @@
+(bind-func dsp:DSP
+  (lambda (in time chan dat)
+    (cond ((< chan 2.0)
+           (+ 
+            (* 0.3 (strings in time chan dat))
+            (* (strings in time chan dat) (subbass in time chan dat))
+            (* 0.3 (subbass in time chan dat))
+
+             (* 0.1 (piano in time chan dat))
+              (* (piano in time chan dat) (fmsynth in time chan dat))
+              (* 0.1 (fmsynth in time chan dat))))
+          (else 0.0))))
+
+(dsp:set! dsp)
+
+
+(define scale (pc:scale 0 'lydian))
+
+(define piano-fmsynth-morph
+  (lambda (beat dur)
+
+    (play fmsynth (pc:relative (+ 36.0 root) (rampr 7 7 1) scale)  (cosr 40 10 1/2) dur )
+    (play piano (pc:relative (+ 36.0 root) (rampr 7 7 1) scale) (sinr 140 20 1/2) dur)
+    
+
+   (callback (*metro* (+ beat (* 0.5 dur))) 'piano-fmsynth-morph (+ beat dur) dur)
+))
+
+
+(piano-fmsynth-morph (*metro* 'get-beat 1) 1/4 )
+
+(define sub-strings-morph
+  (lambda (beat dur)
+
+    (play subbass (pc:relative (+ 12.0 root) (cosr 7 5  1/8) scale)  (cosr 110 10 1/8) dur)
+    ;(play strings (pc:relative 24 (cosr 0 3 1/3) scale) (sinr 110 20 1/8) dur)
+    
+
+   (callback (*metro* (+ beat (* 0.5 dur))) 'sub-strings-morph (+ beat dur) dur)
+))
+
+
+(sub-strings-morph (*metro* 'get-beat 1) 1 )

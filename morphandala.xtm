@@ -1,0 +1,177 @@
+(define glctx (gl:make-ctx ":0.0" #f 0.0 0.0 1280.0 800.0))
+
+(bind-func initgl
+  (lambda ()
+    (glMatrixMode GL_PROJECTION)
+    (glLoadIdentity)
+    (glOrtho -12.8 12.8 -8. 8. -10.0 10.)
+    (glMatrixMode GL_MODELVIEW)))
+
+(initgl)
+
+;;animation functions
+(bind-func wave
+	(lambda (wavelength:double amplitude:double)
+		(* amplitude (+ 0.5 (* 0.5 (cos (/ (i64tod (now)) wavelength)))))))
+
+(bind-func wave
+	(lambda (wavelength:double amplitude:double)
+		(* amplitude (+ 0.5 (* 0.5 (cos (/ (+ (i64tod (now)) (* 100.0 counter)) wavelength)))))))
+
+(bind-func wave
+	(lambda (wavelength:double amplitude:double)
+		(* amplitude (+ 0.5 (* 0.5 (cos (/ (* 100.0 counter) wavelength)))))))
+
+(bind-func wave
+	(lambda (wavelength:double amplitude:double)
+		(* amplitude (+ 0.5 (* 0.5 (cos (/ (* 100.0 first_ring) wavelength)))))))
+
+;; my circle function
+(bind-func circle
+	(lambda (radius res)
+		(glBegin GL_TRIANGLE_FAN)
+		(let ((i:double 0.0))
+			(dotimes (i res)
+				(let ((radians (* (/ i res) 6.283)))
+					(glVertex2d (* (sin radians) radius) 
+            (* (cos radians) radius))))
+		(glEnd))))
+
+;;ring
+(bind-func ring
+	(lambda (size:double n:double trans:double rot:double)
+		(let ((i:double 1.0))
+      		(dotimes (i n)
+		      (glPushMatrix)
+		      (glRotated  (+ (* i (/ 360.0 n)) rot) 0.0 0.0 1.0) ;(wave (+ 20000.0 (* 0.1 i)) 1.0)
+		      (glTranslated 0.0 (+ trans size) 0.0);
+		      
+      		(glColor3d (wave (+ 20000.0 (* 1.5 i)) 1.0) (wave (+ 90000.0 (* 4.0 i)) 1.0) (wave (+ 50000.0 (* 1.0 i)) 1.0))
+		      
+			(glScaled size size size)
+			(cylinder-sphere  (+ (* i 10.0) 100000.0))
+		      ;(circle size 22.0)
+	
+		      (glPopMatrix)))))
+
+
+
+
+(bind-val first_ring double 0.0)
+(bind-val second_ring double 0.0)
+(bind-val third_ring double 0.0)
+(bind-val fourth_ring double 0.0)
+(bind-val fifth_ring double 0.0)
+
+;;mandala
+(bind-func mandala
+	(lambda (size:double)
+		(glPushMatrix)
+		(glScaled size size 1.0)
+
+
+		;(circle 1.0 22.0)
+		(cylinder-sphere  100000.0)
+
+		;(ring 0.75 7.0 1.0 first_ring) 
+
+		;(ring 0.5 18.0 2.5 second_ring)
+
+		;(ring 0.25 45.0 3.5 third_ring)
+	
+		;(ring 0.125 90.0 4.0 fourth_ring)
+
+		;(ring 0.0625 180.0 4.25 fifth_ring)
+
+		(ring 0.75 7.0 1.0 0.0) 
+
+		(ring 0.5 18.0 2.5 0.0)
+
+		(ring 0.25 45.0 3.5 0.0)
+	
+		;(ring 0.125 90.0 4.0 0.0)
+
+		;(ring 0.0625 180.0 4.25 fifth_ring)
+
+		(glPopMatrix)
+
+		))
+
+(bind-func circleOrMandala
+	(lambda (size:double)
+		(if (> size 0.75) (mandala size) (circle size 22.0))))
+
+(bind-func mandala_ring
+	(lambda (size:double n:double trans:double rot:double)
+		(let ((i:double 1.0))
+      		(dotimes (i n)
+		      (glPushMatrix)
+		      (glRotated  (+ (* i (/ 360.0 n)) rot) 0.0 0.0 1.0)
+		      (glTranslated 0.0 (+ trans size) 0.0)
+		      
+      			;(glColor3d (wave (+ 20000.0 (* 1.5 i)) 1.0) (wave (+ 90000.0 (* 4.0 i)) 1.0) (wave (+ 50000.0 (* 1.0 i)) 1.0))
+		      ;(glScaled size size 1.0)
+		      ;(mandala2)
+		      (mandala size)
+	
+		      (glPopMatrix)))))
+
+
+
+
+(wave 1000000 1.0)
+
+
+
+
+
+(bind-func my-gl-loop
+    (lambda ()
+      (glClear (+ GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT))
+      (glLoadIdentity)
+      (inc_counter)
+      (dec_counter)
+      (glPushMatrix)
+     ;(let ((scale (- 0.5 (wave 100000.0 0.25)))) 
+      	(glScaled 0.5 0.5 1.0)
+      (mandala 1.0)
+      (mandala_ring 0.75 7.0 7.0 first_ring)
+      (mandala_ring 0.5 19.0 13.0 second_ring)
+      (mandala_ring 0.25 44.0 16.5 third_ring)
+      (mandala_ring 0.125 90.0 18.25 fourth_ring)
+      (ring 0.0625 180.0 19.25 fourth_ring)
+      (glPopMatrix)
+
+      ))
+
+(bind-func my-gl-loop
+    (lambda ()
+      (glClear (+ GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT))
+      (glLoadIdentity)
+      (glEnable GL_DEPTH_TEST)
+
+      (glPushMatrix)
+      (glRotated 315.0 1.0 0.0 0.0)
+      (glRotated (/ (i64tod (now)) 10000.0) 0.0 0.0 1.0)
+
+      ;(glRotated (/ (i64tod (now)) 10000.0) 1.0 0.0 0.0)
+      ;(glRotated (/ (i64tod (now)) 10000.0) 0.0 1.0 0.0)
+ 
+      (mandala 2.0)
+
+      (glPopMatrix)
+
+      ))
+
+ ;(glTranslated 1.0 0.0 0.0)
+     ;(glScaled 1.0 1.0 1.5)
+
+
+;; standard impromptu callback                                                
+(define opengl-test
+  (lambda ()
+    (my-gl-loop)
+    (gl:swap-buffers glctx)
+    (callback (+ (now) 500) 'opengl-test)))
+
+(opengl-test)

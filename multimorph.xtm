@@ -9,11 +9,98 @@
 
 (initgl)
 
+(bind-func u1
+  (lambda (j:double n:double)
+    (* j (/ TWOPI n))))
+
+
+ (bind-func v1
+  (lambda (i:double n:double)
+    (* i (/ PI n))))
+
+ (bind-func x1
+  (lambda (u:double v:double)
+    (cos u)))
+
+ (bind-func y1
+  (lambda (u:double v:double)
+    (sin  u))))
+
+ (bind-func z1
+  (lambda (u:double v:double)
+    v))
+
+
+
+ (bind-func u2
+  (lambda (j:double n:double)
+    (* j (/ TWOPI n))))
+
+ (bind-func v2
+  (lambda (i:double n:double)
+    (* i (/ PI n))))
+
+ (bind-func x2
+  (lambda (u:double v:double)
+    (* (sin v) (cos u))))
+
+ (bind-func y2
+  (lambda (u:double v:double)
+    (sin u)))
+
+ (bind-func z2
+  (lambda (u:double v:double)
+    v))
+
+
+  (bind-func u3
+  (lambda (j:double n:double)
+    (* j (/ TWOPI n))))
+
+ (bind-func v3
+  (lambda (i:double n:double)
+    (* i (/ PI n))))
+
+ (bind-func x3
+  (lambda (u:double v:double)
+    (* (sin v) (cos u))))
+
+ (bind-func y3
+  (lambda (u:double v:double)
+    (* (sin v) (sin (* 2.0 u)))))
+
+ (bind-func z3
+  (lambda (u:double v:double)
+    v))
+
+
+
+  (bind-func u4
+  (lambda (j:double n:double)
+    (* j (/ TWOPI n))))
+
+ (bind-func v4
+  (lambda (i:double n:double)
+    (* i (/ PI n))))
+
+ (bind-func x4
+  (lambda (u:double v:double)
+    (* (sin v) (cos (* 1.0 u)))))
+
+ (bind-func y4
+  (lambda (u:double v:double)
+    (* (sin v) (sin u))))
+
+ (bind-func z4
+  (lambda (u:double v:double)
+    (+ 2.0 (cos (* 3.0 v)))))
+
+
 (bind-func cylinder-sphere
 	(lambda (morph-rate:double)
 		(glBegin GL_LINE_STRIP)
       (let ((i:double 0.0) (j:double 0.0)
-            (n:double 50.0)
+            (n:double 25.0)
             (u 0.0) (v 0.0) (x 0.0) (y 0.0) (z 0.0)
             (morph (* 3.0 (+ 0.5 (* 0.5 (sin (/ (i64tod (now)) morph-rate))))))
             (morph2 (- morph 1.0))
@@ -41,95 +128,10 @@
 
             )
 
-            (glColor3d (/ i n) 0.3 0.2)
+            ;(glColor3d (/ i n) 0.3 0.2)
             (glVertex3d x y z))))
       (glEnd)))
 
-(bind-func u1
- 	(lambda (j:double n:double)
- 		(* j (/ TWOPI n))))
-
-
- (bind-func v1
- 	(lambda (i:double n:double)
- 		(* i (/ PI n))))
-
- (bind-func x1
- 	(lambda (u:double v:double)
- 		(cos u)))
-
- (bind-func y1
- 	(lambda (u:double v:double)
- 		(sin u)))
-
- (bind-func z1
- 	(lambda (u:double v:double)
- 		v))
-
-
-
- (bind-func u2
- 	(lambda (j:double n:double)
- 		(* j (/ TWOPI n))))
-
- (bind-func v2
- 	(lambda (i:double n:double)
- 		(* i (/ PI n))))
-
- (bind-func x2
- 	(lambda (u:double v:double)
- 		(* (sin v) (cos u))))
-
- (bind-func y2
- 	(lambda (u:double v:double)
- 		(sin u)))
-
- (bind-func z2
- 	(lambda (u:double v:double)
- 		v))
-
-
-  (bind-func u3
-  (lambda (j:double n:double)
-    (* j (/ TWOPI n))))
-
- (bind-func v3
-  (lambda (i:double n:double)
-    (* i (/ PI n))))
-
- (bind-func x3
-  (lambda (u:double v:double)
-    (* (sin v) (cos u))))
-
- (bind-func y3
-  (lambda (u:double v:double)
-    (* (sin v) (sin u))))
-
- (bind-func z3
-  (lambda (u:double v:double)
-    v))
-
-
-
-  (bind-func u4
-  (lambda (j:double n:double)
-    (* j (/ TWOPI n))))
-
- (bind-func v4
-  (lambda (i:double n:double)
-    (* i (/ PI n))))
-
- (bind-func x4
-  (lambda (u:double v:double)
-    (* (sin v) (cos u))))
-
- (bind-func y4
-  (lambda (u:double v:double)
-    (* (sin v) (sin u))))
-
- (bind-func z4
-  (lambda (u:double v:double)
-    (cos v)))
 
 
 

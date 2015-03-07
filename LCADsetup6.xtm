@@ -14,7 +14,6 @@
 ;;; Set up the constants we're going to need
 ;;;
 
-
 (define sample-path "/Users/jasonlevine/Code/extempore/assets/")
 (define drum-path (string-append sample-path "salamander/OH/"))
 (define edrum-path (string-append sample-path "biolabsDubstepKit3/"))
@@ -65,30 +64,34 @@
       ;; rms passes signal straight through
       (rms chan
            (+ 
+            (* 0.1 (piano in time chan dat))
+              (* (piano in time chan dat) (fmsynth in time chan dat))
+              (* 0.1 (fmsynth in time chan dat))
+
+
             (strings in time chan dat) 
-            (piano in time chan dat) 
             (drums in time chan dat) 
             (edrums in time chan dat)
             (djembe in time chan dat)
             (conga in time chan dat)
-            (fmsynth in time chan dat)
             (perc in time chan dat)
             (subbass in time chan dat))))))
 
 
 ;(bind-func dsp:DSP
-;  (lambda (in time chan dat)
-;    (cond ((< chan 2.0)
-;           (+ (drums in time chan dat)
-;           (edrums in time chan dat) 
-;            (conga in time chan dat)
-;            (djembe in time chan dat)
-;            (perc in time chan dat)
-;            (strings in time chan dat)
-;             (piano in time chan dat)
-;              (subbass in time chan dat)
-;              (fmsynth in time chan dat)))
-;          (else 0.0))))
+ ; (lambda (in time chan dat)
+  ;  (cond ((< chan 2.0)
+   ;        (+ (drums in time chan dat)
+    ;       (edrums in time chan dat) 
+     ;       (conga in time chan dat)
+      ;      (djembe in time chan dat)
+       ;     (perc in time chan dat)
+        ;    (strings in time chan dat)
+         ;    (piano in time chan dat)
+          ;    (subbass in time chan dat)
+           ;   (* (piano in time chan dat) (fmsynth in time chan dat))
+            ;  (fmsynth in time chan dat)))
+         ; (else 0.0))))
 
 (dsp:set! dsp)
 

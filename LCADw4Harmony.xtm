@@ -128,13 +128,14 @@
 
 (define melody
   (lambda (beat dur)
-    (if (*metre2* beat 1.0)
-      (set! dur (random '(1/4 1 1/3 ))))
+    (if (*metre1* beat 1.0)
+      (set! dur (random '(2 1 1/3 ))))
 
     (let ( (note (pc:relative (pcr) (cosr 5 4 1/3) scale))
-          (vel (random  '(120 20 ))))
+          (vel (random  '(70 50 ))))
 
-      (play strings note vel (* 1 dur))
+      (play fmsynth note vel (* 1 dur) 0.8 (+ 10.0 root))
+      ;(play piano note (+ 100.0 vel) (* 1 dur))
 
       )
 
@@ -188,7 +189,7 @@
 (define melody1
   (lambda (beat dur octave)
     (if (= (modulo beat 1) 0)
-      (set! dur (random '( 1/6  1/3))))
+      (set! dur (random '( 2  4))))
     (strings-djembe beat (pc:relative (+ (pcr) (* octave 24) (random '(0.0 1.0))) 
                   (* (random '(1 -1 2)) ( modulo  (/ (modulo beat 8) dur) 5)) scale) 
                   (random '(140 100)) dur)
