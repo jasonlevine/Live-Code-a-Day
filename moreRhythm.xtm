@@ -1,11 +1,11 @@
 ;;;;; drums
 ;; define me first!
-(define *metro* (make-metro 130))
+(define *metro* (make-metro 110))
 
-(define *subdiv* 1/8)
-(define *metre1* (make-metre '( 12 2 1 1) *subdiv* ))
-(define *metre1* (make-metre '( 12 6 3 2 1) 1 ))
-(define *metre3* (make-metre '( 8 2) *subdiv*))
+(define *subdiv* 1)
+(define *metre1* (make-metre '( 16 8 4 2 1 1) 1 ))
+(define *metre2* (make-metre '( 16 8 4 2 1 1) 1/2 ))
+(define *metre3* (make-metre '( 16 8 3 2 1 1) 1/4))
 (define *metre4* (make-metre '( 3 3 2) *subdiv*))
 
 (define edrums-fmsynth
@@ -80,26 +80,71 @@
        ; )
 
 
-   (if ( = (modulo (*metre1* beat) 3) 0)
-      (play perc 15 110 dur)
-      (play drums (random 10 19) (cosr 110 20 (random '(5/2 1/4))) dur))
+  ; (if ( = (modulo (*metre1* beat) 3) 0)
+   ;   (play perc 15 110 dur)
+    ;  (play drums (random 10 19) (cosr 110 20 (random '(5/2 1/4))) dur))
 
     
       
 
      
-    (if ( > (modulo (*metre1* beat) 6) 2)
-      (play conga (trir 12 3 1/3) (random '(130 0)) dur ))
+    ;(if ( > (modulo (*metre1* beat) 6) 2)
+     ; (play conga (trir 12 3 1/3) (random '(130 0)) dur ))
     
-    (if ( > (modulo (*metre1* beat) 6) 0)
-      (play djembe (cosr 3 (random 3 4) 1/3) (random '(110 120 0)) dur ))
+   ; (if ( > (modulo (*metre1* beat) 6) 0)
+    ;  (play djembe (cosr 3 (random 3 4) 1/3) (random '(110 120 0)) dur ))
     
 
-   (callback (*metro* (+ beat (* 0.5 dur))) 'k it (+ beat dur) dur)
+   (callback (*metro* (+ beat (* 0.5 dur))) 'kit (+ beat dur) dur)
 ))
 
 
-(kit (*metro* 'get-beat 1) 1/4) 
+(kit (*metro* 'get-beat 1) 1) 
+
+
+(define kit2
+  (lambda (beat dur)
+      
+      (cond ((*metre2* beat 1.0) (play  drums 10 120 (* 3.0 dur)))
+            ((*metre2* beat 2.0) (play  drums 21 110 dur))
+            ((*metre2* beat 4.0) (play  drums 10 120 dur))
+            ((*metre2* beat 5.0) (play  drums 42 120 dur))
+            ((*metre2* beat 7.0) (play  drums 10 110 dur))
+            ((*metre2* beat 9.0) (play  drums 11 110 (* 3.0 dur)))
+            ((*metre2* beat 12.0) (play 1/3  drums 41 110 dur))
+           ((*metre2* beat 13.0) (play  drums 46 110 dur)))
+
+   (callback (*metro* (+ beat (* 0.5 dur))) 'kit2 (+ beat dur) dur)
+))
+
+
+(kit2 (*metro* 'get-beat 1) 1/2) 
+
+(define kit3
+  (lambda (beat dur)
+      
+      (cond ((*metre3* beat 1.0) (play  conga 10 110 (* 3.0 dur)))
+            ((*metre3* beat 2.0) (play  conga 21 90 dur))
+            ((*metre3* beat 4.0) (play  conga 10 110 dur))
+            ((*metre3* beat 5.0) (play  conga 42 110 dur))
+            ((*metre3* beat 7.0) (play  conga 10 90 dur))
+            ((*metre3* beat 9.0) (play  conga 11 90 (* 3.0 dur)))
+            ((*metre3* beat 12.0) (play 1/3  conga 41 90 dur))
+           ((*metre3* beat 13.0) (play  conga 46 110 dur)))
+      
+   (callback (*metro* (+ beat (* 0.5 dur))) 'kit3 (+ beat dur) dur)
+))
+
+
+(kit3 (*metro* 'get-beat 1) 1/4)
+
+
+
+
+
+
+
+
 
 (define violin
   (lambda (beat dur)
