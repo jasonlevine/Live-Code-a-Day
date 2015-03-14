@@ -93,7 +93,32 @@
             ;  (fmsynth in time chan dat)))
          ; (else 0.0))))
 
+(bind-func dsp:[SAMPLE,SAMPLE,i64,i64,SAMPLE*]* 1000000
+  (let ((delayl (delay_c (convert (* SAMPLERATE 0.25))))
+        (delayr (delay_c (convert (* SAMPLERATE 0.33333333)))))
+    (lambda (in:SAMPLE time:i64 chan:i64 dat:SAMPLE*)
+      (cond ((= chan 0)
+             (delayl (+ (edrums in time chan dat)
+                        (djembe in time chan dat)
+                        (conga in time chan dat)
+                        (perc in time chan dat)
+                        (fmsynth in time chan dat)
+                        (piano in time chan dat))
+                     0.5 0.3))
+            ((= chan 1)
+             (delayr (+ (edrums in time chan dat)
+                    (djembe in time chan dat)
+                    (conga in time chan dat)
+                    (perc in time chan dat)
+                    (fmsynth in time chan dat)
+                    (piano in time chan dat))
+                     0.5 0.3))
+            (else 0.0)))))
+
+
 (dsp:set! dsp)
+
+
 
 ;;; Set up drum samples
 ;;;

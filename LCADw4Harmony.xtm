@@ -129,10 +129,10 @@
 (define melody
   (lambda (beat dur)
     (if (*metre1* beat 1.0)
-      (set! dur (random '(2 1 1/3 ))))
+      (set! dur (random '(1/2  ))))
 
-    (let ( (note (pc:relative (pcr) (cosr 5 4 1/3) scale))
-          (vel (random  '(70 50 ))))
+    (let ( (note (pc:relative (- (pcr) 12) (cosr 5 4 1/3) scale))
+          (vel (random  '(20 ))))
 
       (play fmsynth note vel (* 1 dur) 0.8 (+ 10.0 root))
       ;(play piano note (+ 100.0 vel) (* 1 dur))
@@ -167,13 +167,13 @@
 (define guitar1
   (lambda (beat dur)
     (if (*metre1* beat 1.0)
-      (play strings (- (pcr) 12)  130 (* 2 dur)))
+      (play fmsynth (+ (pcr) 12)  30 (* 2 dur)))
 
     (if (*metre1* beat 2.0)
-      (play strings (- (pcr) 5)  110 (* 2 dur)))
+      (play fmsynth (- (pcr) 5)  10 (* 2 dur)))
 
      (if (*metre1* beat 3.0)
-      (play strings (pcr)  110 (* 2 dur)))
+      (play fmsynth (pcr)  10 (* 2 dur)))
 
   
     (callback (*metro* (+ beat (* .5 dur))) 'guitar1 (+ beat dur) dur)
@@ -189,24 +189,24 @@
 (define melody1
   (lambda (beat dur octave)
     (if (= (modulo beat 1) 0)
-      (set! dur (random '( 2  4))))
-    (strings-djembe beat (pc:relative (+ (pcr) (* octave 24) (random '(0.0 1.0))) 
-                  (* (random '(1 -1 2)) ( modulo  (/ (modulo beat 8) dur) 5)) scale) 
-                  (random '(140 100)) dur)
-    (callback (*metro* (+ beat (* .6 dur))) 'melody 1 (+ beat dur) dur octave )
+      (set! dur (random '(4 3))))
+    (play piano (pc:relative (+ (pcr) (* octave 24) (random '(0.0 1.0))) 
+                  (* (random '(2 -2 3)) ( modulo  (/ (modulo beat 8) dur) 5)) scale) 
+                  (random '(170 110)) dur)
+    (callback (*metro* (+ beat (* .6 dur))) 'melody1 (+ beat dur) dur octave )
     ))
 
-(melody1 (*metro* 'get-beat 1) 1 1)
+(melody1 (*metro* 'get-beat 1) 1 0)
 
 
 (define bassline
   (lambda (beat dur)
     (if (or (= (modulo beat 4) 0) (= (modulo beat 4) 3) (= (modulo beat 8) 7)
       (set! dur (random '(1/4 1/2 1/3 1))))
-    (play subbass (pc:relative (+ (pcr) -12) 
+    (play piano (pc:relative (+ (pcr) 12) 
                   (* (random '(-1 1 2)) ( modulo  (/ (modulo beat 8) dur) 3)) scale) 
                   (random '(100 120)) dur)))
-    ;(callback (*metro* (+ beat (* .6 dur))) 'bassline (+ beat dur) dur)
+    (callback (*metro* (+ beat (* .6 dur))) 'bassline (+ beat dur) dur)
     ))
 
 (bassline (*metro* 'get-beat 1) 1)

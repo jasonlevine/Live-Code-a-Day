@@ -11,7 +11,7 @@
 
 (bind-func u1
   (lambda (j:double n:double)
-    (* j (/ TWOPI n))))
+    (* j (/ (/ TWOPI n) 2.0))))
 
 
  (bind-func v1
@@ -20,7 +20,7 @@
 
  (bind-func x1
   (lambda (u:double v:double)
-    (cos u)))
+    (cos (*  4.0 u))))
 
  (bind-func y1
   (lambda (u:double v:double)
@@ -46,7 +46,7 @@
 
  (bind-func y2
   (lambda (u:double v:double)
-    (sin u)))
+    (sin (* u 2.0))))
 
  (bind-func z2
   (lambda (u:double v:double)
@@ -85,20 +85,20 @@
 
  (bind-func x4
   (lambda (u:double v:double)
-    (* (sin v) (cos (* 1.0 u)))))
+    (* (sin (* v 2.0)) (cos (* 1.0 u)))))
 
  (bind-func y4
   (lambda (u:double v:double)
-    (* (sin v) (sin u))))
+    (* 2.0 (* (sin v) (sin u)))))
 
  (bind-func z4
   (lambda (u:double v:double)
-    (+ 2.0 (cos (* 3.0 v)))))
+    (+ 0.0 (* 2.0 (cos (* 6.8 v))))))
 
 
 (bind-func cylinder-sphere
 	(lambda (morph-rate:double)
-		(glBegin GL_LINE_STRIP)
+		  
       (let ((i:double 0.0) (j:double 0.0)
             (n:double 25.0)
             (u 0.0) (v 0.0) (x 0.0) (y 0.0) (z 0.0)
@@ -106,6 +106,8 @@
             (morph2 (- morph 1.0))
             (morph3 (- morph 2.0)))              
         (dotimes (i (+ n 1.0))
+          (glColor3d (/ i n) (/ morph 4.0) (* )
+          (glBegin GL_TRIANGLE_FAN)
           (dotimes (j (+ n 1.0))
             (cond ((< morph 1.0)
               (set! u (+ (* (u2 j n) morph) (* (- 1.0 morph) (u1 j n))))
@@ -128,11 +130,13 @@
 
             )
 
-            ;(glColor3d (/ i n) 0.3 0.2)
-            (glVertex3d x y z))))
-      (glEnd)))
+            (glVertex3d x y z))
+          (glEnd)
+          ))
+      ))
 
-
+      ;;(glColor3d (/ i n) 0.3 0.2)
+            ;;(glVertex3d x y z)
 
 
 (bind-func my-gl-loop
@@ -147,7 +151,7 @@
       		(glTranslated (- (* 5.0 i) 10.0) -1.0 1.0)  
       		(glScaled 2.5 2.5 2.5)
       		(glRotated 260.0 1.0 0.0 0.0)
-      		(cylinder-sphere (+ (* i 100.0) 100000.0))  
+      		(cylinder-sphere (+ (* i (wave 100.0 500.0 4.0)) 100000.0))  
       		(glPopMatrix))) 
       ))
  
