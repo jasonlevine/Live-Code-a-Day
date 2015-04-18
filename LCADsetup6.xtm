@@ -94,31 +94,26 @@
          ; (else 0.0))))
 
 (bind-func dsp:[SAMPLE,SAMPLE,i64,i64,SAMPLE*]* 1000000
-  (let ((delayl (delay_c (convert (* SAMPLERATE 0.25))))
-        (delayr (delay_c (convert (* SAMPLERATE 0.33333333)))))
+  (let ((delay (delay_c (convert (* SAMPLERATE 0.1))))
+        (flanger (flanger_c (convert (* SAMPLERATE 0.02)) 0.2 0.9 (convert (* SAMPLERATE 0.2))))
+        (chorus (chorus_c 0.5))
+        (reverb (reverb_c 1000.0))
+        (distort (distort_c 3.0))
+        )
     (lambda (in:SAMPLE time:i64 chan:i64 dat:SAMPLE*)
-      (cond ((= chan 0)
-             (delayl (+ (edrums in time chan dat)
-                        (djembe in time chan dat)
-                        (conga in time chan dat)
-                        (perc in time chan dat)
-                        (fmsynth in time chan dat)
-                        (piano in time chan dat))
-                     0.5 0.3))
-            ((= chan 1)
-             (delayr (+ (edrums in time chan dat)
-                    (djembe in time chan dat)
-                    (conga in time chan dat)
-                    (perc in time chan dat)
-                    (fmsynth in time chan dat)
-                    (piano in time chan dat))
-                     0.5 0.3))
+      (cond ((< chan 2.0)
+              (+ (reverb (edrums in time chan dat) 0.1 0.8)
+                  (delay (drums in time chan dat) 0.5 0.8)
+                    (delay  (djembe in time chan dat) 0.9 0.7)
+                      (flanger  (conga in time chan dat) 0.8 0.7)
+                       (delay (perc in time chan dat) 0.5 0.5))
+                     )
             (else 0.0)))))
 
 
 (dsp:set! dsp)
 
-
+(play-note (now) conga 18 180 (* 0.1 44100))
 
 ;;; Set up drum samples
 ;;;

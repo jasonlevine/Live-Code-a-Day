@@ -1,0 +1,37 @@
+(define *metro* (make-metro 140))
+
+(define *subdiv* 1)
+(define *metre1* (make-metre '(8) 1/4 ))
+
+(define kick
+  (lambda (beat dur)
+    (if (= (modulo beat 16) 0)
+      (play edrums 12 180 1))    
+    
+    ;(if (or (= (modulo beat 6) 4) (= (modulo beat 16) 5))
+      ;(play edrums (random 41 46) (random '(110  0 0 0)) 1)
+
+   (callback (*metro* (+ beat (* 0.5 dur))) 'ki ck (+ beat dur) dur)
+))
+
+(kick (*metro* 'get-beat 1) 1/4) 
+
+(define hihats
+  (lambda (beat dur)
+    (play djembe (random 20 28) 0 1)    
+    
+
+   (callback (*metro* (+ beat (* 0.5 dur) 0.1)) 'hihats (+ beat dur 0.3) dur)
+))
+
+(hihats (*metro* 'get-beat 1) 0.26) 
+
+(define perc
+  (lambda (beat dur)
+    (play conga (random 20 39) (random '(100)) 1/8)    
+    
+
+   (callback (*metro* (+ beat (* 0.5 dur))) 'pe rc (+ beat dur 0.1) dur)
+))
+
+(perc (*metro* 'get-beat 1) 1/4) 
